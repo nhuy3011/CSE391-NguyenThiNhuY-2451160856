@@ -65,11 +65,11 @@ Các tiện ích giãn cách trong Bootstrap tuân theo cú pháp: {thuộc tín
  + Bước 2: Viết mã nguồn ghi đè biến trong custom.scss. Mở file custom.scss vừa tạo và viết theo cấu trúc bắt buộc sau:
 
 **SCSS**
-1. Khai báo màu mới của bạn
+- Khai báo màu mới của bạn
 $custom-danger-red: #E63946;
-2. Ghi đè biến hệ thống của Bootstrap trước khi import lõi
+- Ghi đè biến hệ thống của Bootstrap trước khi import lõi
 $primary: $custom-danger-red;
-3. Tiến hành Nhập (Import) toàn bộ mã nguồn SASS của Bootstrap vào
+- Tiến hành Nhập (Import) toàn bộ mã nguồn SASS của Bootstrap vào
 @import "../node_modules/bootstrap/scss/bootstrap";
 Bước 3: Biên dịch file SASS thành CSS
 Chạy lệnh biên dịch trong terminal để chuyển đổi file custom.scss thành file CSS thông thường mà trình duyệt có thể đọc được:

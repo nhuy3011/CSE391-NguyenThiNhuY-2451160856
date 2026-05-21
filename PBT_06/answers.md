@@ -52,3 +52,33 @@ Các tiện ích giãn cách trong Bootstrap tuân theo cú pháp: {thuộc tín
 | Độ rộng trên Desktop (>=992px) | Bị giới hạn chiều rộng tối đa (max-width: 960px) và căn giữa. | Vẫn tiếp tục tràn ra 100% chiều rộng màn hình. | Bị giới hạn chiều rộng tối đa (max-width: 960px) và căn giữa y hệt .container. |
 | Trường hợp áp dụng	| Làm khung bọc cho nội dung chính của website (như bài viết, danh sách sản phẩm) để nội dung không bị dạt ra quá sát mép màn hình lớn.	| Làm banner lớn đầu trang (Hero Section), thanh menu điều hướng (Navbar) hoặc chân trang (Footer) khi muốn màu nền hoặc nội dung trải dài hết màn hình.	| Thích hợp cho các layout muốn hiển thị tràn viền mềm mại trên các thiết bị di động/máy tính bảng nhỏ, nhưng cần gom gọn gàng lại khi xem trên máy tính để bàn |
 
+# PHẦN C — PHÂN TÍCH (20 điểm)
+## Câu C1 (10đ) — Bootstrap tùy biến
+1. Quy trình đổi màu $primary từ mặc định sang màu đỏ #E63946
+- Bootstrap 5 được viết bằng SASS (Syntactically Awesome Style Sheets). Để đổi màu chủ đạo hệ thống một cách triệt để, chúng ta không sửa file CSS đã biên dịch sẵn mà phải can thiệp trực tiếp vào mã nguồn SASS của Bootstrap thông qua các bước sau:
+- Các công cụ cần thiết
+  + Node.js & npm: Để cài đặt môi trường và các gói thư viện.
+  + Trình biên dịch SASS: Phổ biến nhất là gói sass (Dart Sass) cài qua npm.
+  + Trình soạn thảo mã nguồn: VS Code (khuyên dùng kèm extension Live Sass Compiler nếu không muốn gõ lệnh).
+- Các tệp tin cần thiết và cách sửa đổi
+  + Bước 1: Tạo tệp cấu hình riêng. Tạo một file SASS riêng của bạn, ví dụ tên là custom.scss nằm chung thư mục dự án. Tuyệt đối không sửa trực tiếp vào file trong thư mục node_modules/bootstrap vì khi cập nhật thư viện, mọi sửa đổi sẽ bị xóa sạch.
+ + Bước 2: Viết mã nguồn ghi đè biến trong custom.scss. Mở file custom.scss vừa tạo và viết theo cấu trúc bắt buộc sau:
+
+**SCSS**
+1. Khai báo màu mới của bạn
+$custom-danger-red: #E63946;
+2. Ghi đè biến hệ thống của Bootstrap trước khi import lõi
+$primary: $custom-danger-red;
+3. Tiến hành Nhập (Import) toàn bộ mã nguồn SASS của Bootstrap vào
+@import "../node_modules/bootstrap/scss/bootstrap";
+Bước 3: Biên dịch file SASS thành CSS
+Chạy lệnh biên dịch trong terminal để chuyển đổi file custom.scss thành file CSS thông thường mà trình duyệt có thể đọc được:
+**Bash**
+npx sass custom.scss assets/css/bootstrap.custom.css
+Cuối cùng, chỉ cần nhúng file bootstrap.custom.css vừa tạo vào file HTML của mình thay cho file Bootstrap mặc định là xong.
+
+2. Tại sao KHÔNG NÊN ghi đè trực tiếp .btn-primary { background: red; }?
+- Việc viết đè CSS thủ công theo kiểu cũ (.btn-primary { background: red; }) tuy nhanh nhưng là một "bẫy tai hại" trong dự án thực tế vì các lý do cốt lõi sau:
+  +  Làm phá vỡ tính đồng bộ và nhất quán hệ thống (Design System)
+  +  Biến $primary trong Bootstrap không chỉ quản lý mỗi màu nền của nút bấm (.btn-primary). Nó là linh hồn kết nối hàng loạt thành phần khác nhau. Nếu bạn chỉ đè CSS cho .btn-primary, bạn sẽ phải tự tay đi đè tiếp hàng trăm class khác như:Màu chữ của các liên kết: .text-primaryMàu nền thông báo, huy hiệu: .bg-primary, .badge-primary. Các trạng thái tương tác: .btn-primary:hover, .btn-primary:active, .btn-primary:focusĐường viền, thanh điều hướng, các ô lựa chọn đang kích hoạt: .border-primary, .nav-pills .nav-link.active, .form-check-input:checked
+ + SASS sở hữu cơ chế tự động tính toán thông minh (Color Functions). Khi bạn đổi màu $primary bằng SASS, Bootstrap sẽ sử dụng các hàm toán học nội bộ để tự động tính toán ra các dải màu phái sinh chính xác tuyệt đối:Tự động tính toán màu đậm hơn 10\% cho trạng thái Hover, đậm hơn 15\% cho trạng thái Active.Tự động tính toán màu sắc tương phản cho phần chữ (chuyển chữ thành màu trắng hoặc đen thông qua hàm color-contrast()) giúp nút bấm luôn đạt chuẩn dễ đọc, không bao giờ bị tình trạng nền đỏ chữ xanh lỗi font.Tóm lại: Dùng biến SASS giúp bạn "sửa 1 nơi, đổi 1000 chỗ", đảm bảo toàn bộ giao diện đổi màu đồng bộ một cách khoa học, sạch sẽ và chuyên nghiệp bậc nhất.

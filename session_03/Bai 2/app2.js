@@ -46,3 +46,79 @@ function renderTasks() {
 // KHỞI CHẠY KHI MỞ TRANG
 renderTasks();
 updateTaskSummary();
+
+// LẤY THÊM DOM CHO LUỒNG B
+const btnThemCv = document.getElementById('nut-them-cv');
+const btnHuyTask = document.getElementById('nut-huy-task');
+const popupTask = document.getElementById('popup-task');
+const formTask = document.getElementById('form-task');
+const lblAlertBox = document.getElementById('alert-box');
+
+const txtTaskIndex = document.getElementById('task-index');
+const txtTieuDe = document.getElementById('inp-tieude');
+const txtMoTa = document.getElementById('inp-mota');
+const txtHan = document.getElementById('inp-han');
+const txtUuTien = document.getElementById('inp-uutiendoc');
+
+// Cập nhật hàm thống kê chạy thực tế
+function updateTaskSummary() {
+    let tong = danhSachTask.length;
+    let xong = 0;
+    for(let i = 0; i < danhSachTask.length; i++) {
+        if(danhSachTask[i].trangThai === true) {
+            xong++;
+        }
+    }
+    lblTong.innerText = tong;
+    lblXong.innerText = xong;
+    lblChuaXong.innerText = tong - xong;
+}
+
+// Hàm lưu dữ liệu xuống bộ nhớ máy
+function saveTasks() {
+    localStorage.setItem('data_congviec', JSON.stringify(danhSachTask));
+}
+
+// Bấm nút thêm để mở popup
+btnThemCv.addEventListener('click', function() {
+    formTask.reset();
+    txtTaskIndex.value = ""; // Để trống = Chế độ THÊM MỚI
+    document.getElementById('form-title').innerText = "Tạo công việc mới";
+    popupTask.classList.remove('hidden');
+});
+
+// Bấm nút đóng để ẩn popup
+btnHuyTask.addEventListener('click', function() {
+    popupTask.classList.add('hidden');
+});
+
+// Bắt sự kiện submit form để xử lý Thêm
+formTask.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    if (txtTaskIndex.value !== "") return; // Nếu có index thì bỏ qua (để luồng C xử lý)
+
+    // Tạo object công việc từ input
+    const taskMoi = {
+        tieuDe: txtTieuDe.value.trim(),
+        moTa: txtMoTa.value.trim(),
+        hanChot: txtHan.value,
+        uuTien: txtUuTien.value,
+        trangThai: false // Mặc định tạo mới là chưa hoàn thành
+    };
+
+    // Thêm object vào mảng
+    danhSachTask.push(taskMoi);
+
+    // Lưu localStorage, render lại danh sách và cập nhật thống kê
+    saveTasks();
+    renderTasks();
+    updateTaskSummary();
+
+    // Hiển thị thông báo thành công ngắn
+    lblAlertBox.innerText = "Thêm công việc thành công!";
+    setTimeout(function() { lblAlertBox.innerText = ""; }, 2000);
+
+    // Đóng form
+    popupTask.classList.add('hidden');
+});

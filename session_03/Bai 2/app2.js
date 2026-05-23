@@ -1,53 +1,11 @@
-// LẤY CÁC PHẦN TỬ DOM CƠ BẢN
+// ==========================================
+// 1. LẤY CÁC PHẦN TỬ DOM CƠ BẢN & PHỤ TRỢ
+// ==========================================
 const vungDanhSachCv = document.getElementById('vung-danh-sach-cv');
 const lblTong = document.getElementById('tong-cv');
 const lblXong = document.getElementById('cv-xong');
 const lblChuaXong = document.getElementById('cv-chua-xong');
 
-// LUỒNG A: Đọc dữ liệu từ localStorage, nếu không có thì tạo mảng rỗng
-let danhSachTask = JSON.parse(localStorage.getItem('data_congviec')) || [];
-
-// LUỒNG A: Thống kê trạng thái trống ban đầu
-function updateTaskSummary() {
-    lblTong.innerText = danhSachTask.length;
-    lblXong.innerText = "0";
-    lblChuaXong.innerText = "0";
-}
-
-// LUỒNG A: Render dữ liệu mảng ra màn hình dưới dạng Card
-function renderTasks() {
-    vungDanhSachCv.innerHTML = ""; // Xóa sạch giao diện cũ
-
-    // Nếu mảng chưa có dữ liệu, hiển thị trạng thái rỗng
-    if (danhSachTask.length === 0) {
-        vungDanhSachCv.innerHTML = `<p style="color:gray; text-align:center;">Danh sách công việc trống.</p>`;
-        return;
-    }
-
-    // Duyệt mảng để tạo các thẻ div card công việc
-    danhSachTask.forEach(function(task, index) {
-        const card = document.createElement('div');
-        card.className = "card-cong-viec";
-
-        card.innerHTML = `
-            <h4>
-                <input type="checkbox">
-                ${task.tieuDe} [Mức: ${task.uuTien}]
-            </h4>
-            <p>Mô tả: ${task.moTa}</p>
-            <p>Hạn chót: <strong>${task.hanChot}</strong></p>
-            <button onclick="suaTask(${index})">Sửa</button>
-            <button onclick="xoaTask(${index})">Xóa</button>
-        `;
-        vungDanhSachCv.appendChild(card);
-    });
-}
-
-// KHỞI CHẠY KHI MỞ TRANG
-renderTasks();
-updateTaskSummary();
-
-// LẤY THÊM DOM CHO LUỒNG B
 const btnThemCv = document.getElementById('nut-them-cv');
 const btnHuyTask = document.getElementById('nut-huy-task');
 const popupTask = document.getElementById('popup-task');
@@ -59,6 +17,16 @@ const txtTieuDe = document.getElementById('inp-tieude');
 const txtMoTa = document.getElementById('inp-mota');
 const txtHan = document.getElementById('inp-han');
 const txtUuTien = document.getElementById('inp-uutiendoc');
+
+// ==========================================
+// 2. KHỞI TẠO DỮ LIỆU TỪ LOCALSTORAGE
+// ==========================================
+let danhSachTask = JSON.parse(localStorage.getItem('data_congviec')) || [];
+
+// Hàm lưu dữ liệu xuống bộ nhớ máy
+function saveTasks() {
+    localStorage.setItem('data_congviec', JSON.stringify(danhSachTask));
+}
 
 // Cập nhật hàm thống kê chạy thực tế
 function updateTaskSummary() {
@@ -74,10 +42,47 @@ function updateTaskSummary() {
     lblChuaXong.innerText = tong - xong;
 }
 
-// Hàm lưu dữ liệu xuống bộ nhớ máy
-function saveTasks() {
-    localStorage.setItem('data_congviec', JSON.stringify(danhSachTask));
+// ==========================================
+// 3. HÀM RENDER ĐÃ SỬA HẾT LỖI CÚ PHÁP
+// ==========================================
+function renderTasks() {
+    vungDanhSachCv.innerHTML = ""; // Xóa sạch giao diện cũ
+
+    // Nếu mảng chưa có dữ liệu, hiển thị trạng thái rỗng
+    if (danhSachTask.length === 0) {
+        vungDanhSachCv.innerHTML = `<p style="color:gray; text-align:center;">Danh sách công việc trống.</p>`;
+        return;
+    }
+
+    // Duyệt mảng để tạo các thẻ div card công việc
+    danhSachTask.forEach(function(task, index) {
+        const card = document.createElement('div');
+        card.className = "card-cong-viec";
+
+        let classGachNgang = task.trangThai ? "da-hoan-thanh" : "";
+        let trangThaiChecked = task.trangThai ? "checked" : "";
+
+        card.innerHTML = `
+            <h4 class="${classGachNgang}">
+                <input type="checkbox" ${trangThaiChecked} onchange="doiTrangThai(${index})">
+                ${task.tieuDe} [Mức: ${task.uuTien}]
+            </h4>
+            <p>Mô tả: ${task.moTa}</p>
+            <p>Hạn chót: <strong>${task.hanChot}</strong></p>
+            <button onclick="suaTask(${index})">Sửa</button>
+            <button onclick="xoaTask(${index})">Xóa</button>
+        `;
+        vungDanhSachCv.appendChild(card);
+    });
 }
+
+// KHỞI CHẠY LẦN ĐẦU KHI MỞ TRANG
+renderTasks();
+updateTaskSummary();
+
+// ==========================================
+// 4. CÁC HÀM XỬ LÝ SỰ KIỆN (EVENT LISTENERS)
+// ==========================================
 
 // Bấm nút thêm để mở popup
 btnThemCv.addEventListener('click', function() {
@@ -92,43 +97,50 @@ btnHuyTask.addEventListener('click', function() {
     popupTask.classList.add('hidden');
 });
 
-// Bắt sự kiện submit form để xử lý Thêm
+// Bắt sự kiện submit form để xử lý cả Thêm và Sửa
 formTask.addEventListener('submit', function(e) {
     e.preventDefault();
 
-    if (txtTaskIndex.value !== "") return; // Nếu có index thì bỏ qua (để luồng C xử lý)
+    if (txtTaskIndex.value === "") {
+        // [LUỒNG B] XỬ LÝ THÊM MỚI
+        const taskMoi = {
+            tieuDe: txtTieuDe.value.trim(),
+            moTa: txtMoTa.value.trim(),
+            hanChot: txtHan.value,
+            uuTien: txtUuTien.value,
+            trangThai: false // Mặc định tạo mới là chưa hoàn thành
+        };
+        danhSachTask.push(taskMoi);
+        lblAlertBox.innerText = "Thêm công việc thành công!";
+    } else {
+        // [LUỒNG C] XỬ LÝ CẬP NHẬT (SỬA)
+        const viTriSua = txtTaskIndex.value;
+        const taskCapNhat = {
+            tieuDe: txtTieuDe.value.trim(),
+            moTa: txtMoTa.value.trim(),
+            hanChot: txtHan.value,
+            uuTien: txtUuTien.value,
+            trangThai: danhSachTask[viTriSua].trangThai // Giữ nguyên trạng thái cũ
+        };
+        danhSachTask[viTriSua] = taskCapNhat;
+        lblAlertBox.innerText = "Cập nhật công việc thành công!";
+    }
 
-    // Tạo object công việc từ input
-    const taskMoi = {
-        tieuDe: txtTieuDe.value.trim(),
-        moTa: txtMoTa.value.trim(),
-        hanChot: txtHan.value,
-        uuTien: txtUuTien.value,
-        trangThai: false // Mặc định tạo mới là chưa hoàn thành
-    };
-
-    // Thêm object vào mảng
-    danhSachTask.push(taskMoi);
-
-    // Lưu localStorage, render lại danh sách và cập nhật thống kê
+    // Đồng bộ lại tất cả và đóng form
     saveTasks();
     renderTasks();
     updateTaskSummary();
 
-    // Hiển thị thông báo thành công ngắn
-    lblAlertBox.innerText = "Thêm công việc thành công!";
     setTimeout(function() { lblAlertBox.innerText = ""; }, 2000);
-
-    // Đóng form
     popupTask.classList.add('hidden');
 });
 
-// Bấm nút sửa của một công việc bất kỳ
+// Bấm nút sửa của một công việc bất kỳ (Gắn vào window để gọi từ onclick HTML)
 window.suaTask = function(index) {
     const taskCu = danhSachTask[index];
 
     // Đưa dữ liệu cũ lên form
-    txtTaskIndex.value = index; // Lưu vị trí index vào ô ẩn để đánh dấu chế độ SỬA
+    txtTaskIndex.value = index; 
     txtTieuDe.value = taskCu.tieuDe;
     txtMoTa.value = taskCu.moTa;
     txtHan.value = taskCu.hanChot;
@@ -136,48 +148,16 @@ window.suaTask = function(index) {
 
     // Đổi tiêu đề form sang trạng thái cập nhật
     document.getElementById('form-title').innerText = "Chỉnh sửa công việc";
-    popupTask.classList.remove('hidden'); // Hiện form
+    popupTask.classList.remove('hidden'); 
 }
-
-// Bổ sung xử lý Cập nhật dữ liệu khi Submit form
-formTask.addEventListener('submit', function(e) {
-    if (txtTaskIndex.value === "") return; // Nếu trống tức là Thêm mới (Luồng B đã lo)
-
-    const viTriSua = txtTaskIndex.value;
-
-    // Tạo object chứa thông tin mới cập nhật
-    const taskCapNhat = {
-        tieuDe: txtTieuDe.value.trim(),
-        moTa: txtMoTa.value.trim(),
-        hanChot: txtHan.value,
-        uuTien: txtUuTien.value,
-        trangThai: danhSachTask[viTriSua].trangThai // Giữ nguyên trạng thái hoàn thành cũ
-    };
-
-    // Cập nhật lại vào mảng đúng vị trí
-    danhSachTask[viTriSua] = taskCapNhat;
-
-    // Lưu, render và cập nhật thống kê
-    saveTasks();
-    renderTasks();
-    updateTaskSummary();
-
-    lblAlertBox.innerText = "Cập nhật công việc thành công!";
-    setTimeout(function() { lblAlertBox.innerText = ""; }, 2000);
-
-    popupTask.classList.add('hidden');
-});
 
 // Bấm nút xóa công việc
 window.xoaTask = function(index) {
-    // Hiển thị xác nhận
     const xacNhan = confirm("Bạn có thực sự muốn xóa bỏ công việc này không?");
     
-    // Nếu đồng ý thì tiến hành xóa
     if (xacNhan === true) {
         danhSachTask.splice(index, 1); // Xóa đúng 1 phần tử tại vị trí index
 
-        // Đồng bộ dữ liệu xuống bộ nhớ và vẽ lại giao diện
         saveTasks();
         renderTasks();
         updateTaskSummary();
@@ -185,4 +165,14 @@ window.xoaTask = function(index) {
         lblAlertBox.innerText = "Đã xóa công việc!";
         setTimeout(function() { lblAlertBox.innerText = ""; }, 2000);
     }
+}
+
+// Bấm checkbox để đổi trạng thái hoàn thành
+window.doiTrangThai = function(index) {
+    // Đảo ngược trạng thái hiện tại (true thành false, false thành true)
+    danhSachTask[index].trangThai = !danhSachTask[index].trangThai;
+
+    saveTasks();
+    renderTasks();
+    updateTaskSummary();
 }

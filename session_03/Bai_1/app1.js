@@ -33,12 +33,14 @@ function renderStudents() {
             <td>${sv.email}</td>
             <td>${sv.diem}</td>
             <td>
-                <button>Sửa</button>
-                <button>Xóa</button>
+               <button onclick="suaSinhVien('${sv.ma}')">Sửa</button>
+               <button onclick="xoaSinhVien('${sv.ma}')">Xóa</button>
             </td>
         `;
         danhSachSvBody.appendChild(row);
     });
+
+    
 }
 
 // KHỞI CHẠY KHI TẢI TRANG
@@ -136,4 +138,67 @@ formSinhVien.addEventListener('submit', function(e) {
 
     // Đóng popup
     popupForm.classList.add('hidden');
+});
+
+// Bấm nút sửa ở một dòng bất kỳ
+window.suaSinhVien = function(maSv) {
+    // Xác định đúng sinh viên cần sửa trong mảng
+    let svCanSua = null;
+    for(let i = 0; i < danhSachSinhVien.length; i++) {
+        if (danhSachSinhVien[i].ma === maSv) {
+            svCanSua = danhSachSinhVien[i];
+            break;
+        }
+    }
+    if (!svCanSua) return;
+
+    // Đưa dữ liệu hiện tại lên form
+    txtTrangThai.value = svCanSua.ma; // Đặt Mã SV làm trạng thái để phân biệt sang chế độ SỬA
+    txtMa.value = svCanSua.ma;
+    txtMa.disabled = true; // Khóa trường Mã SV không cho sửa đổi
+    txtTen.value = svCanSua.ten;
+    txtNgaySinh.value = svCanSua.ngaySinh;
+    txtLop.value = svCanSua.lop;
+    txtEmail.value = svCanSua.email;
+    txtDiem.value = svCanSua.diem;
+
+    // Đổi tiêu đề form sang trạng thái cập nhật
+    document.getElementById('tieude-form').innerText = "Cập nhật thông tin sinh viên";
+    popupForm.classList.remove('hidden'); // Mở form ra
+}
+
+// Thay đổi/Bổ sung xử lý cập nhật khi submit form
+formSinhVien.addEventListener('submit', function(e) {
+    // Chỉ xử lý nếu trạng thái của form có chứa Mã SV (tức là đang ở chế độ SỬA)
+    if (txtTrangThai.value === "") return;
+
+    const maDangSua = txtTrangThai.value;
+
+    // Thu thập dữ liệu mới từ form
+    const thongTinCapNhat = {
+        ma: txtMa.value.trim(),
+        ten: txtTen.value.trim(),
+        ngaySinh: txtNgaySinh.value,
+        lop: txtLop.value.trim(),
+        email: txtEmail.value.trim(),
+        diem: txtDiem.value
+    };
+
+    // Cập nhật lại dữ liệu trong mảng
+    for (let i = 0; i < danhSachSinhVien.length; i++) {
+        if (danhSachSinhVien[i].ma === maDangSua) {
+            danhSachSinhVien[i] = thongTinCapNhat; // Ghi đè thông tin mới
+            break;
+        }
+    }
+
+    // Lưu lại localStorage, render lại bảng, cập nhật thống kê
+    saveStudents();
+    renderStudents();
+    updateStatistics();
+
+    lblThongBao.innerText = "Cập nhật thông tin thành công!";
+    setTimeout(function() { lblThongBao.innerText = ""; }, 2000);
+
+    popupForm.classList.add('hidden'); // Đóng popup
 });

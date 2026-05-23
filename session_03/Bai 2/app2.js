@@ -36,8 +36,8 @@ function renderTasks() {
             </h4>
             <p>Mô tả: ${task.moTa}</p>
             <p>Hạn chót: <strong>${task.hanChot}</strong></p>
-            <button>Sửa</button>
-            <button>Xóa</button>
+            <button onclick="suaTask(${index})">Sửa</button>
+            <button onclick="xoaTask(${index})">Xóa</button>
         `;
         vungDanhSachCv.appendChild(card);
     });
@@ -120,5 +120,50 @@ formTask.addEventListener('submit', function(e) {
     setTimeout(function() { lblAlertBox.innerText = ""; }, 2000);
 
     // Đóng form
+    popupTask.classList.add('hidden');
+});
+
+// Bấm nút sửa của một công việc bất kỳ
+window.suaTask = function(index) {
+    const taskCu = danhSachTask[index];
+
+    // Đưa dữ liệu cũ lên form
+    txtTaskIndex.value = index; // Lưu vị trí index vào ô ẩn để đánh dấu chế độ SỬA
+    txtTieuDe.value = taskCu.tieuDe;
+    txtMoTa.value = taskCu.moTa;
+    txtHan.value = taskCu.hanChot;
+    txtUuTien.value = taskCu.uuTien;
+
+    // Đổi tiêu đề form sang trạng thái cập nhật
+    document.getElementById('form-title').innerText = "Chỉnh sửa công việc";
+    popupTask.classList.remove('hidden'); // Hiện form
+}
+
+// Bổ sung xử lý Cập nhật dữ liệu khi Submit form
+formTask.addEventListener('submit', function(e) {
+    if (txtTaskIndex.value === "") return; // Nếu trống tức là Thêm mới (Luồng B đã lo)
+
+    const viTriSua = txtTaskIndex.value;
+
+    // Tạo object chứa thông tin mới cập nhật
+    const taskCapNhat = {
+        tieuDe: txtTieuDe.value.trim(),
+        moTa: txtMoTa.value.trim(),
+        hanChot: txtHan.value,
+        uuTien: txtUuTien.value,
+        trangThai: danhSachTask[viTriSua].trangThai // Giữ nguyên trạng thái hoàn thành cũ
+    };
+
+    // Cập nhật lại vào mảng đúng vị trí
+    danhSachTask[viTriSua] = taskCapNhat;
+
+    // Lưu, render và cập nhật thống kê
+    saveTasks();
+    renderTasks();
+    updateTaskSummary();
+
+    lblAlertBox.innerText = "Cập nhật công việc thành công!";
+    setTimeout(function() { lblAlertBox.innerText = ""; }, 2000);
+
     popupTask.classList.add('hidden');
 });

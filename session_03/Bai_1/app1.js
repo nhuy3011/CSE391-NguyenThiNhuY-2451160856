@@ -202,3 +202,27 @@ formSinhVien.addEventListener('submit', function(e) {
 
     popupForm.classList.add('hidden'); // Đóng popup
 });
+
+// Bấm nút xóa ở dòng dữ liệu
+window.xoaSinhVien = function(maSv) {
+    // Hiển thị hộp xác nhận trước khi xóa
+    const dongY = confirm("Bạn có thực sự chắc chắn muốn xóa sinh viên mang mã: " + maSv + " không?");
+    
+    // Nếu đồng ý thì thực hiện xóa
+    if (dongY === true) {
+        // Xóa phần tử khỏi mảng bằng cơ chế lọc filter (chỉ giữ lại những sinh viên có mã khác mã cần xóa)
+        danhSachSinhVien = danhSachSinhVien.filter(function(sv) {
+            return sv.ma !== maSv;
+        });
+
+        // Lưu lại localStorage
+        saveStudents();
+
+        // Render lại bảng & cập nhật thống kê dữ liệu
+        renderStudents();
+        updateStatistics();
+
+        lblThongBao.innerText = "Đã xóa sinh viên khỏi hệ thống!";
+        setTimeout(function() { lblThongBao.innerText = ""; }, 2000);
+    }
+}

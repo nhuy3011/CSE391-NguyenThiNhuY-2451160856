@@ -167,3 +167,22 @@ formTask.addEventListener('submit', function(e) {
 
     popupTask.classList.add('hidden');
 });
+
+// Bấm nút xóa công việc
+window.xoaTask = function(index) {
+    // Hiển thị xác nhận
+    const xacNhan = confirm("Bạn có thực sự muốn xóa bỏ công việc này không?");
+    
+    // Nếu đồng ý thì tiến hành xóa
+    if (xacNhan === true) {
+        danhSachTask.splice(index, 1); // Xóa đúng 1 phần tử tại vị trí index
+
+        // Đồng bộ dữ liệu xuống bộ nhớ và vẽ lại giao diện
+        saveTasks();
+        renderTasks();
+        updateTaskSummary();
+
+        lblAlertBox.innerText = "Đã xóa công việc!";
+        setTimeout(function() { lblAlertBox.innerText = ""; }, 2000);
+    }
+}

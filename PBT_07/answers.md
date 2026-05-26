@@ -57,3 +57,34 @@ console.log("Ngoài block:", a);
   + Kết quả: Trong block: 2 ; Ngoài block: 1
   + Giải thích: let và const có tính chất Block Scope (chỉ có giá trị bên trong cặp ngoặc nhọn {} chứa nó). Biến let a = 2 nằm bên trong {} là một biến hoàn toàn cô lập, độc lập với biến a = 1 bên ngoài.
 
+# Câu A2 (5đ) — Các kiểu dữ liệu và ép kiểu
+```console.log(typeof null);	``` => "object"
+
+```console.log(typeof undefined);```	=> "undefined" 
+
+```console.log(typeof NaN);	```=> "number"
+
+```console.log("5" + 3);	```=> "53"
+
+```console.log("5" - 3);	```=> 2
+
+```console.log("5" * "3");	```=> 15
+
+```console.log(true + true);	```=> 2
+
+```console.log([] + []);	```=> "" (Chuỗi rỗng)
+
+```console.log([] + {});	```=> "[object Object]"
+
+```console.log({} + []);	```=> 0 hoặc "[object Object]"
+
+**Tại sao "5" + 3 và "5" - 3 cho kết quả khác nhau.**
+1. Đối với phép toán "5" + 3
+  + Kết quả: "53"
+  + Toán tử + trong JavaScript có 2 nhiệm vụ: Phép cộng số học toán học **VÀ** Phép nối chuỗi ký tự.
+  + Quy tắc ngầm: Nếu ít nhất một trong hai vế là String, JavaScript sẽ ưu tiên tuyệt đối cho nhiệm vụ Nối chuỗi.Vì vậy, nó tự động chuyển số 3 thành chuỗi "3" thông qua cơ chế Type Coercion và dán chúng lại với nhau thành "53".
+2. Đối với phép toán "5" - 3 
++ Kết quả: 2
++ Toán tử - (và các toán tử khác như *, /) chỉ có duy nhất 1 nhiệm vụ: Phép toán số học. Nó không hề có khái niệm "trừ chuỗi".
++ Quy tắc ngầm: JavaScript bắt buộc phải tìm cách đưa cả hai vế về kiểu dữ liệu Number để tính toán.Nó thấy chuỗi "5" có thể chuyển thành số 5 hợp lệ, nên nó âm thầm thực hiện phép tính 5 - 3 = 2. Nếu cậu thay bằng "hello" - 3, kết quả sẽ là NaN vì chữ "hello" không thể biến thành số được.
+

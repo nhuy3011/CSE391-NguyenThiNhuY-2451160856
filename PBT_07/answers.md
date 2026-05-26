@@ -129,3 +129,43 @@ console.log("Ngoài block:", a);
 
 ```if (" ") console.log("H");``` => có in
 
+# Câu A5 (5đ) — Template Literals
+```
+// Giả định dữ liệu để chạy thử code
+const name = "Minh";
+const age = 20;
+const userId = "USR99";
+const page = 2;
+const title = "Khóa Học JavaScript";
+const description = "Học lập trình JS từ cơ bản đến nâng cao cùng Anh Hùng.";
+const price = 499000;
+
+// ------------------------------------------
+// Cách 1: Chèn biến cơ bản
+// ------------------------------------------
+const greeting = `Xin chào ${name}! Bạn ${age} tuổi.`;
+console.log("=== Kết quả Cách 1 ===");
+console.log(greeting);
+console.log("\n----------------------------------\n");
+// ------------------------------------------
+// Cách 2: Tạo URL API (Nối chuỗi phức tạp)
+// ------------------------------------------
+const url = `https://api.example.com/users/${userId}/orders?page=${page}`;
+
+console.log("=== Kết quả Cách 2 ===");
+console.log(url);
+console.log("\n----------------------------------\n");
+// ------------------------------------------
+// Cách 3: Gộp chuỗi nhiều dòng (Multi-line String) để render HTML
+// ------------------------------------------
+const html = `
+<div class="card">
+    <h2>${title}</h2>
+    <p>${description}</p>
+    <span>Giá: ${price}đ</span>
+</div>
+`;
+console.log("=== Kết quả Cách 3 ===");
+console.log(html);
+```
+

@@ -88,3 +88,26 @@ console.log("Ngoài block:", a);
 + Toán tử - (và các toán tử khác như *, /) chỉ có duy nhất 1 nhiệm vụ: Phép toán số học. Nó không hề có khái niệm "trừ chuỗi".
 + Quy tắc ngầm: JavaScript bắt buộc phải tìm cách đưa cả hai vế về kiểu dữ liệu Number để tính toán.Nó thấy chuỗi "5" có thể chuyển thành số 5 hợp lệ, nên nó âm thầm thực hiện phép tính 5 - 3 = 2. Nếu cậu thay bằng "hello" - 3, kết quả sẽ là NaN vì chữ "hello" không thể biến thành số được.
 
+# Câu A3 (5đ) — So sánh == vs ===
+```console.log(5 == "5");	```=> true
+
+```console.log(5 === "5");```=> false
+
+```console.log(null == undefined);```	=> true
+
+```console.log(null === undefined);```	=> false
+
+```console.log(NaN == NaN);```	=> false
+
+```console.log(0 == false);```	=> true
+
+```console.log(0 === false);```	=> false
+
+```console.log("" == false);```	=> true
+
+**Từ giờ trở đi, bạn nên dùng ==hay ===? Tại sao?**
+- LUÔN LUÔN DÙNG === (và !==). Hạn chế tối đa hoặc tuyệt đối không dùng == trừ một vài trường hợp cực kỳ đặc biệt có chủ đích.
+- Tại sao lại như vậy?
+  + **Tránh những Bug ngầm:** Như cậu thấy ở trên, "" == false ra true, 0 == false ra true. Nếu cậu làm tính năng kiểm tra xem người dùng đã nhập tên chưa bằng cách viết: if (username == false), và người dùng nhập vào số 0, code sẽ hiểu lầm là họ chưa nhập! Dùng === sẽ chặn đứng nguy cơ này vì nó ép kiểu dữ liệu phải trùng khớp hoàn toàn.
+  + **Code tường minh, dễ đọc:** Khi cậu viết ===, cậu và các đồng đội nhìn vào sẽ hiểu ngay: "Đoạn này bắt buộc phải bằng nhau cả về Giá trị lẫn Kiểu dữ liệu". Cậu làm chủ hoàn toàn dòng chảy của code chứ không phó mặc cho JavaScript tự ý "ép kiểu hộ".
+  + **Tối ưu hiệu năng (Performance):** Toán tử === chạy nhanh hơn == một chút vì nếu thấy khác kiểu dữ liệu (ví dụ so sánh Số với Chuỗi), nó sẽ trả về false ngay lập tức mà không cần mất thời gian thực hiện các bước thuật toán ép kiểu phức tạp ở đằng sau.

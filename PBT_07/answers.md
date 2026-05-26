@@ -111,3 +111,21 @@ console.log("Ngoài block:", a);
   + **Tránh những Bug ngầm:** Như cậu thấy ở trên, "" == false ra true, 0 == false ra true. Nếu cậu làm tính năng kiểm tra xem người dùng đã nhập tên chưa bằng cách viết: if (username == false), và người dùng nhập vào số 0, code sẽ hiểu lầm là họ chưa nhập! Dùng === sẽ chặn đứng nguy cơ này vì nó ép kiểu dữ liệu phải trùng khớp hoàn toàn.
   + **Code tường minh, dễ đọc:** Khi cậu viết ===, cậu và các đồng đội nhìn vào sẽ hiểu ngay: "Đoạn này bắt buộc phải bằng nhau cả về Giá trị lẫn Kiểu dữ liệu". Cậu làm chủ hoàn toàn dòng chảy của code chứ không phó mặc cho JavaScript tự ý "ép kiểu hộ".
   + **Tối ưu hiệu năng (Performance):** Toán tử === chạy nhanh hơn == một chút vì nếu thấy khác kiểu dữ liệu (ví dụ so sánh Số với Chuỗi), nó sẽ trả về false ngay lập tức mà không cần mất thời gian thực hiện các bước thuật toán ép kiểu phức tạp ở đằng sau.
+
+# Câu A4 (5đ) — Thật & Giả
+```if ("0") console.log("A");``` => Có in
+
+```if ("") console.log("B"); ```=> không in
+
+```if ([]) console.log("C");``` => có in
+
+```if ({}) console.log("D");``` => có in
+
+```if (null) console.log("E");``` => không in
+
+```if (0) console.log("F");``` => không in
+
+```if (-1) console.log("G");``` => có in
+
+```if (" ") console.log("H");``` => có in
+

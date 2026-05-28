@@ -169,3 +169,32 @@ console.log("=== Kết quả Cách 3 ===");
 console.log(html);
 ```
 
+# PHẦN C — SUY LUẬN (20 điểm)
+## Câu C1 (10đ) — Debug JavaScript
+- **Lỗi 1**: Gán nhầm giá trị thay vì so sánh trong if
+  + Dòng lỗi:``` if (giaSauGiam = 0) {```
+  + Giải thích: Cậu đang dùng một dấu bằng (=), đây là phép gán chứ không phải phép so sánh. Nó sẽ gán giá trị 0 cho biến giaSauGiam. Trong JavaScript, số 0 mang giá trị falsy, khiến điều kiện if này luôn luôn sai (không bao giờ in ra "Sản phẩm miễn phí!"), đồng thời làm thay đổi luôn kết quả trả về của hàm thành 0.
+  + Cách sửa: Sửa thành phép so sánh nghiêm ngặt ===.
+- **Lỗi 2:** Thiếu các dấu chấm phẩy dính liền nhau (Syntax Error)
+  + Dòng lỗi: ```return giaSauGiam}// Testconst gia = ... và 20)console.log...```
+  + Giải thích: JavaScript có cơ chế tự động chèn dấu chấm phẩy (ASI). Tuy nhiên, khi cậu viết gộp hàm và lời gọi hàm dính liền trên cùng một dòng mà không có dấu chấm phẩy hay xuống dòng ngăn cách, JavaScript Engine sẽ bị loạn cú pháp và báo lỗi SyntaxError.
+  + Cách sửa: Thêm dấu ; hoặc xuống dòng tường minh giữa các câu lệnh.
+- **Lỗi 3:** Không ép kiểu dữ liệu đầu vào (Type Coercion)
+  + Dòng lỗi: ```const gia = tinhGiaGiamGia("100000", 20)```
+  + Giải thích: Tham số truyền vào "100000" là một Chuỗi (String) chứ không phải Số (Number). Dù phép toán * và / ở bên trong hàm có cơ chế tự ép kiểu ngầm giúp phép tính chạy được, nhưng đây là một thói quen bad practice dễ gây lỗi nghiêm trọng khi cộng chuỗi ở các logic phức tạp hơn.
+  + Cách sửa: Truyền vào một số thuần túy 100000 hoặc dùng Number("100000").
+- **Lỗi 4:** Sử dụng var bừa bãi bên trong hàm
+  + Dòng lỗi: ```var giamGia = giaBan * phanTramGiam / 100```
+  + Giải thích: var có cơ chế hoisting và phạm vi hoạt động theo hàm (function-scoped), dễ gây rò rỉ biến và khó kiểm soát. Trong JavaScript hiện đại (ES6+), chúng ta nên dùng let hoặc const để biến có phạm vi khối cụ thể ({}).
+  + Cách sửa: Thay var bằng const (vì giá trị giamGia này không bị thay đổi lại ở phía sau).
+- **Lỗi 5:** Thiếu ngoặc nhọn {} cho khối lệnh for dính liền
+  + Dòng lỗi: ```console.log("Giá: " + gia2)for (var i = 0; i < 5; i++) {```
+  + Giải thích: Giống lỗi số 2, câu lệnh in log và từ khóa for bị dính chặt trên một dòng mà không có sự phân tách rõ ràng, gây lỗi biên dịch.
+  + Cách sửa: Xuống dòng để phân tách rõ ràng.
+- **Lỗi 6 (Lỗi ẩn):** var kết hợp với setTimeout trong vòng lặp for
+  + Dòng lỗi: ```for (var i = 0; i < 5; i++) { setTimeout(... console.log("Item " + i) ... ) }```
+  + Giải thích tại sao: * Biến var i có cơ chế function-scoped (hoặc global scoped nếu viết ngoài hàm). Nghĩa là trong suốt vòng lặp, hệ thống chỉ tạo ra duy nhất 1 ô nhớ cho biến i này, và giá trị của nó được tăng liên tục sau mỗi vòng lặp.
+setTimeout là một hàm bất đồng bộ. Nó không chạy ngay lập tức mà sẽ đợi ít nhất 1000ms (1 giây) sau mới chạy.
+Trong 1 giây chờ đợi đó, vòng lặp for đồng bộ đã chạy vèo một phát xong xuôi từ lâu và tăng giá trị của i lên đến số 5.
+Đến khi hết 1 giây, cả 5 hàm setTimeout đồng loạt thức dậy và cùng nhìn vào cái ô nhớ i duy nhất lúc này đã bằng 5. Kết quả là màn hình sẽ in ra 5 dòng Item 5 thay vì từ Item 0 đến Item 4.
+  + Cách sửa bằng let: Thay var i thành let i. Biến let có cơ chế block-scoped. Cứ mỗi một vòng lặp, JavaScript sẽ tạo ra một ô nhớ hoàn toàn mới để khóa (bind) giá trị của i tại lượt chạy đó lại. Do đó, khi các setTimeout chạy sau 1 giây, chúng sẽ nhớ chính xác giá trị i riêng biệt của từng vòng lặp, in ra đúng thứ tự mong muốn: Item 0, Item 1, Item 2, Item 3, Item 4.

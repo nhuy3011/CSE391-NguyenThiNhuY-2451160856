@@ -166,3 +166,64 @@ const processOrders = (orders) => {
         .sort((a, b) => b.finalTotal - a.finalTotal);
 };
 ```
+## Câu C2 (10đ) — Thiết kế API
+```
+const miniArray = {
+    // 1. Hàm map: Biến đổi từng phần tử và trả về mảng mới có cùng độ dài
+    map(arr, fn) {
+        const result = [];
+        for (let i = 0; i < arr.length; i++) {
+            // Callback nhận vào 3 tham số tiêu chuẩn: (phần tử hiện tại, chỉ số index, mảng gốc)
+            result.push(fn(arr[i], i, arr));
+        }
+        return result;
+    },
+
+    // 2. Hàm filter: Lọc các phần tử thỏa mãn điều kiện (callback trả về true)
+    filter(arr, fn) {
+        const result = [];
+        for (let i = 0; i < arr.length; i++) {
+            // Nếu hàm callback fn trả về giá trị truthy, giữ phần tử đó lại
+            if (fn(arr[i], i, arr)) {
+                result.push(arr[i]);
+            }
+        }
+        return result;
+    },
+
+    // 3. Hàm reduce: Tích lũy mảng thành một giá trị đơn duy nhất
+    reduce(arr, fn, initialValue) {
+        // Kiểm tra xem người dùng có truyền vào giá trị khởi tạo (initialValue) hay không
+        const hasInitialValue = initialValue !== undefined;
+        
+        // Nếu có initialValue thì biến tích lũy accumulator bằng initialValue và bắt đầu lặp từ index 0.
+        // Nếu KHÔNG có, accumulator lấy luôn phần tử đầu tiên của mảng (arr[0]) và bắt đầu lặp từ index 1.
+        let accumulator = hasInitialValue ? initialValue : arr[0];
+        let startIndex = hasInitialValue ? 0 : 1;
+
+        // Trường hợp mảng rỗng và không có initialValue -> Ném lỗi giống spec của JavaScript
+        if (arr.length === 0 && !hasInitialValue) {
+            throw new TypeError("Reduce of empty array with no initial value");
+        }
+
+        for (let i = startIndex; i < arr.length; i++) {
+            // Callback nhận vào: (biến tích lũy, phần tử hiện tại, chỉ số index, mảng gốc)
+            accumulator = fn(accumulator, arr[i], i, arr);
+        }
+        
+        return accumulator;
+    }
+};
+// CHẠY SCRIPT TEST (ĐẢM BẢO TOÀN BỘ ĐỀU PASS)
+console.log("--- TEST MAP ---");
+console.log(miniArray.map([1, 2, 3], x => x * 2));        // Khớp kỳ vọng → [2, 4, 6]
+
+console.log("\n--- TEST FILTER ---");
+console.log(miniArray.filter([1, 2, 3, 4], x => x > 2));    // Khớp kỳ vọng → [3, 4]
+
+console.log("\n--- TEST REDUCE ---");
+console.log(miniArray.reduce([1, 2, 3, 4], (a, b) => a + b, 0)); // Khớp kỳ vọng → 10
+
+// Test nâng cao cho reduce khi không truyền initialValue
+console.log(miniArray.reduce([1, 2, 3, 4], (a, b) => a + b));    // Vẫn chạy đúng → 10
+```

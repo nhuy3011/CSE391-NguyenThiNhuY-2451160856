@@ -151,3 +151,18 @@ console.log(product.specs.ram);        // 16 (Bị thay đổi theo!)
   + Ở tầng thứ 1, thuộc tính specs của product bản chất là một Object (kiểu dữ liệu tham chiếu) đang trỏ tới một địa chỉ vùng nhớ khác. Khi ta dùng ...product, JavaScript chỉ sao chép cái địa chỉ vùng nhớ (cái tham chiếu) đó sang cho copy.specs.
   + Kết quả là: cả product.specs và copy.specs đều dùng chung một vùng nhớ.
   + Do đó, khi bạn can thiệp sâu vào tầng thứ 2 bằng lệnh copy.specs.ram = 16, bạn đang vô tình sửa đổi trực tiếp dữ liệu trên vùng nhớ chung đó. Hệ quả là object product gốc cũng bị thay đổi theo.
+
+# PHẦN C — SUY LUẬN (20 điểm)
+## Câu C1 (10đ) — Refactor Code
+**Viết lại code:** ≤ 10 dòng dùng filter, map, sort, destructuring, arrow functions.
+```
+const processOrders = (orders) => {
+    return orders
+        .filter(({ status, total }) => status === "completed" && total > 100000)
+        .map(({ id, customer, total }) => {
+            const discount = total * 0.1;
+            return { id, customer, total, discount, finalTotal: total - discount };
+        })
+        .sort((a, b) => b.finalTotal - a.finalTotal);
+};
+```

@@ -85,3 +85,37 @@ setTimeout là một hàm bất đồng bộ. Nó xếp hàng các callback tron
   - Cơ chế của JavaScript đối với let trong vòng lặp for là: Mỗi một lượt lặp (iteration), JavaScript lại tạo ra một biến j hoàn toàn mới và "chụp" (capture) lại giá trị của j tại thời điểm đó.
   - Chúng ta có 3 lượt lặp tương ứng với 3 biến j riêng biệt nằm ở 3 phạm vi khối khác nhau: j_lượt_1 = 0, j_lượt_2 = 1, j_lượt_3 = 2.
   - Nhờ vào Closure, mỗi callback của setTimeout sẽ "nhớ" chính xác biến j riêng của lượt lặp mà nó được tạo ra. Khi hết 200ms và các callback được gọi, chúng in ra đúng giá trị được "chụp" lại ban đầu: 0, 1, 2.
+
+# Câu A3 (5đ) — Array Methods
+1. Lấy các số chẵn
+```
+const evenNums = nums.filter(n => n % 2 === 0);
+```
+3. Nhân mỗi số với 3
+```
+const tripleNums = nums.map(n => n * 3);
+```
+4. Tính tổng tất cả
+```
+const totalSum = nums.reduce((sum, n) => sum + n, 0);
+```
+5. Tìm số đầu tiên > 7
+```
+const firstGretaterThan7 = nums.find(n => n > 7);
+```
+6. Kiểm tra CÓ số > 10 không (Dùng .some())
+```
+const hasGreaterThan10 = nums.some(n => n > 10);
+```
+7. Kiểm tra TẤT CẢ đều > 0 (Dùng .every())
+```
+const allGreaterThan0 = nums.every(n => n > 0);
+```
+8. Tạo mảng "Số X là [chẵn/lẻ]"
+```
+const parityStrings = nums.map(n => `Số ${n} là ${n % 2 === 0 ? "chẵn" : "lẻ"}`);
+```
+9. Đảo ngược mảng mà không làm biến đổi (mutate) mảng gốc
+```
+const reversedNums = [...nums].reverse(); // Hoặc: nums.toReversed();
+```

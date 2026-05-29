@@ -119,3 +119,35 @@ const parityStrings = nums.map(n => `Số ${n} là ${n % 2 === 0 ? "chẵn" : "l
 ```
 const reversedNums = [...nums].reverse(); // Hoặc: nums.toReversed();
 ```
+
+## Câu A4 (5đ) — Object Destructuring & Spread
+**Dự đoán output:**
+```
+const product = {
+    name: "iPhone 16",
+    price: 25990000,
+    specs: { ram: 8, storage: 256, color: "Titan" }
+};
+
+// Destructuring
+const { name, price, specs: { ram, color } } = product;
+console.log(name, price, ram, color);  // iPhone 16 25990000 8 Titan
+console.log(specs);                     // LỖI: ReferenceError: specs is not defined
+
+// Spread
+const updated = { ...product, price: 23990000, sale: true };
+console.log(updated.price);            // 23990000
+console.log(updated.sale);             // true
+console.log(product.price);            // 25990000 (Mảng gốc KHÔNG đổi)
+
+// Spread gotcha
+const copy = { ...product };
+copy.specs.ram = 16;
+console.log(product.specs.ram);        // 16 (Bị thay đổi theo!)
+```
+**Giải thích:**
+- Tại sao product.specs.ram lại bị đổi thành 16?
+  + Toán tử Spread ... chỉ thực hiện sao chép nông (Shallow Copy). Nghĩa là nó chỉ sao chép các thuộc tính ở tầng bề mặt (tầng thứ 1) của Object.
+  + Ở tầng thứ 1, thuộc tính specs của product bản chất là một Object (kiểu dữ liệu tham chiếu) đang trỏ tới một địa chỉ vùng nhớ khác. Khi ta dùng ...product, JavaScript chỉ sao chép cái địa chỉ vùng nhớ (cái tham chiếu) đó sang cho copy.specs.
+  + Kết quả là: cả product.specs và copy.specs đều dùng chung một vùng nhớ.
+  + Do đó, khi bạn can thiệp sâu vào tầng thứ 2 bằng lệnh copy.specs.ram = 16, bạn đang vô tình sửa đổi trực tiếp dữ liệu trên vùng nhớ chung đó. Hệ quả là object product gốc cũng bị thay đổi theo.

@@ -48,3 +48,37 @@ Khi Microtask Queue đã trống, Event Loop chuyển sang Macrotask Queue.
   + Event Loop kiểm tra lại xem có Microtask mới không? Không có.
   + Lấy Macrotask tiếp theo (Callback Nested timeout) -> In ra: 7 - Nested timeout.
   + Sau cùng, khi đủ 100ms trôi qua, Callback Timeout 100ms được đẩy vào Macrotask Queue và được thực thi cuối cùng -> In ra: 5 - Timeout 100ms.
+
+## Câu A2 (5đ) — Fetch API
+**Giải thích chi tiếp từng dòng code:**
+- ```async function getData() {``` : Định nghĩa một hàm bất đồng bộ (asynchronous function) tên là getData. Từ khóa async cho phép chúng ta sử dụng từ khóa await bên trong thân hàm và tự động biến hàm này luôn trả về một Promise.
+- ```try {``` : Bắt đầu một khối lệnh try...catch để giám sát và xử lý bất kỳ lỗi (exception) nào có thể xảy ra trong quá trình thực thi các dòng code bên trong.
+- ```const response = await fetch("https://api.example.com/data");``` : Gọi hàm fetch() để gửi một yêu cầu HTTP GET đến URL được chỉ định. Từ khóa await sẽ tạm dừng hàm getData cho đến khi Promise của fetch được giải quyết (resolved), sau đó gán đối tượng Response nhận được vào biến response.
+- ```if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        ```
+Kiểm tra xem phản hồi từ server có thành công hay không (HTTP status nằm trong khoảng 200-299). Nếu không thành công (!response.ok), hàm sẽ chủ động "ném" (throw) ra một lỗi mới kèm theo mã trạng thái HTTP, lập tức nhảy xuống khối catch.
+- ```const data = await response.json();``` : Đọc luồng dữ liệu từ thân (body) của phản hồi và chuyển đổi (parse) nó từ định dạng chuỗi JSON thành một đối tượng JavaScript. Vì quá trình đọc và parse này là bất đồng bộ, chúng ta cần await để đợi nó hoàn thành trước khi gán kết quả vào biến data.
+- ```return data;``` : Nếu mọi thứ trơn tru, hàm sẽ trả về dữ liệu đã được parse thành công. (Promise của hàm getData lúc này sẽ ở trạng thái fulfilled với giá trị là data).
+- ```} catch (error) {``` : Khối lệnh này sẽ được kích hoạt nếu có bất kỳ lỗi nào xảy ra ở các dòng code nằm trong khối try phía trên. Biến error sẽ chứa thông tin về lỗi đó.
+- ```console.error("Failed:", error.message);``` : Ghi log thông báo lỗi ra màn hình console để lập trình viên dễ dàng debug.
+- ```return null;``` : Trả về null trong trường hợp xảy ra lỗi, giúp hàm không bị crash dữ dội mà vẫn trả về một giá trị an toàn để các hàm gọi nó phía sau xử lý tiếp.
+**Giải thích:**
+1. await fetch(...) — Fetch trả về gì? Tại sao cần await?
+- fetch() trả về gì? Hàm fetch() ngay lập tức trả về một Promise, mà khi được giải quyết (resolved) sẽ trả ra một đối tượng Response (đây mới chỉ là phần headers và thông tin cấu hình của phản hồi, chưa bao gồm dữ liệu body hoàn chỉnh).
+- Tại sao cần await? Vì việc gửi yêu cầu qua mạng Internet mất thời gian (bất đồng bộ). await được dùng để tạm dừng việc thực thi hàm, đợi cho đến khi server phản hồi xong và Promise chuyển sang trạng thái thành công, giúp ta lấy được đối tượng Response để xử lý tiếp theo kiểu tuần tự (giống code đồng bộ).
+2. response.ok — Khi nào false? Liệt kê 3 status codes tương ứng.
+- Khi nào false? Thuộc tính response.ok sẽ trả về false khi mã trạng thái HTTP (HTTP status code) trả về từ server nằm ngoài khoảng 200–299. Điều này có nghĩa là server đã nhận được request nhưng phản hồi rằng có lỗi xảy ra phía client hoặc server.
+- 3 status codes tương ứng:
+  + 404 (Not Found - Không tìm thấy trang/API).
+  + 500 (Internal Server Error - Lỗi hệ thống phía server).
+  + 403 (Forbidden - Bị từ chối truy cập / Không có quyền).
+3. response.json() — Tại sao cần await lần nữa?
+- Tại sao cần await? Đối tượng Response nhận từ fetch ban đầu mới chỉ là các thông tin Metadata (Headers, Status...). Phần thân dữ liệu (Body) thực tế vẫn đang được truyền về dưới dạng một luồng dữ liệu (Stream).
+- Hàm .json() đảm nhận nhiệm vụ đọc toàn bộ luồng dữ liệu này và parse nó thành object. Quá trình đọc stream qua mạng này tốn thời gian (bất đồng bộ), nên bản thân .json() cũng trả về một Promise. Vì vậy ta bắt buộc phải sử dụng await lần thứ hai để đợi quá trình parse này hoàn tất.
+4. try...catch — Catch những lỗi gì?
+- Khối catch trong đoạn code trên sẽ "bắt" được các loại lỗi sau:
+- Network Error (Lỗi mạng): Có lỗi kết nối vật lý như mất mạng Internet, DNS bị lỗi, Server bị sập hoàn toàn không thể phản hồi, hoặc bị chặn bởi chính sách CORS. (Lúc này fetch sẽ tự động reject).
+- Lỗi do lập trình viên tự ném ra (throw new Error): Chính là đoạn code if (!response.ok) { throw new Error(...) }. Khi gặp các lỗi HTTP như 404 hay 500, bản thân fetch không tự coi là lỗi (nó vẫn kết nối thành công tới server), nên ta phải tự throw để catch có thể bắt được.
+- JSON Parse Error (Lỗi cú pháp JSON): Nếu server phản hồi thành công (ví dụ 200 OK) nhưng dữ liệu trả về lại là một chuỗi HTML lỗi hoặc text thông thường chứ không phải format JSON hợp lệ, hàm response.json() sẽ bị lỗi và khối catch sẽ bắt được lỗi này.

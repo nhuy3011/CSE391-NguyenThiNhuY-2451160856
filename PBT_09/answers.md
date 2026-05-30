@@ -76,3 +76,24 @@ const cleanInput = DOMPurify.sanitize(userInput);
 document.querySelector("#result").innerHTML = cleanInput;
 
 ```
+## Câu A3 (5đ) — Event Bubbling
+1. Khi CLICK vào BUTTON (Mặc định - Chưa bỏ comment e.stopPropagation()).
+- Kết quả Output:
+```
+BUTTON
+INNER
+OUTER
+```
+- Giải thích cơ chế:Theo mặc định trong JavaScript, các sự kiện (event) hoạt động theo cơ chế Event Bubbling. Khi bạn click vào một phần tử nằm trong cùng (ở đây là #btn), sự kiện click sẽ kích hoạt hàm xử lý của chính nó trước, sau đó nó sẽ "nổi bọt" ngược lên các phần tử cha bao ngoài nó theo thứ tự từ trong ra ngoài:
+    + Đầu tiên, kích hoạt hàm của #btn -> In ra BUTTON.
+    + Sự kiện nổi bọt lên phần tử cha trực tiếp là #inner -> In ra INNER.
+    + Sự kiện tiếp tục nổi bọt lên phần tử cha ngoài cùng là #outer -> In ra OUTER.2.
+2. Nếu BỎ COMMENT e.stopPropagation()
+- Kết quả Output:
+```
+BUTTON
+```
+- Giải thích cơ chế:Hàm e.stopPropagation() có nhiệm vụ ngăn chặn sự kiện tiếp tục nổi bọt lên các phần tử cha phía trên nó.Khi bạn click vào nút bấm:
+    + Trình duyệt chạy hàm xử lý của #btn -> In ra BUTTON.
+    + Ngay sau đó, dòng lệnh e.stopPropagation() được thực thi. Nó giống như một bức tường chặn đứng sự kiện click lại tại đây.
+    + Sự kiện bị triệt tiêu hoàn toàn và không thể lan truyền lên #inner hay #outer được nữa. Do đó, các hàm xử lý của hai thẻ div cha sẽ không bao giờ được chạy.

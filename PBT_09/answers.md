@@ -97,3 +97,90 @@ BUTTON
     + Trình duyệt chạy hàm xử lý của #btn -> In ra BUTTON.
     + Ngay sau đó, dòng lệnh e.stopPropagation() được thực thi. Nó giống như một bức tường chặn đứng sự kiện click lại tại đây.
     + Sự kiện bị triệt tiêu hoàn toàn và không thể lan truyền lên #inner hay #outer được nữa. Do đó, các hàm xử lý của hai thẻ div cha sẽ không bao giờ được chạy.
+
+# PHẦN C — DEBUG & PHÂN TÍCH (15 điểm)
+## Câu C1 (8đ) — Debug DOM Code
+- Lỗi ```addEventListener("onclick", ...)``` (Dòng 18):
+    + Giải thích: Tên sự kiện truyền vào ```addEventListener``` không có tiền tố on. Phải sửa thành "click".
+- Lỗi ghi đè biến DOM countDisplay = count (Dòng 24):
+    + Giải thích: Biến ```countDisplay``` đang lưu trữ một phần tử DOM (Element). Lệnh này đã vô tình ghi đè giá trị số của count vào biến đó, làm hỏng tham chiếu DOM khiến các lần bấm nút sau không cập nhật được giao diện nữa. Phải sửa thành ```countDisplay.textContent = count;```.
+- Lỗi gán ```historyList.innerHTML = null```; (Dòng 25):
+    + Giải thích: Trong DOM, gán một thuộc tính chuỗi bằng null sẽ biến nó thành chuỗi "null". Kết quả là giao diện sẽ hiển thị chữ "null" trên màn hình. Cách đúng để xóa sạch là gán bằng chuỗi rỗng "".
+- Lỗi hàm item.remove thiếu dấu ngoặc (Dòng 34):
+    + Giải thích: .remove là một phương thức (method), không phải thuộc tính. Thiếu cặp dấu ngoặc () khiến trình duyệt chỉ tham chiếu tới hàm chứ không thực thi lệnh xóa element.
+- Lỗi rò rỉ bộ nhớ (Memory Leak) do gán event listener trong vòng lặp (Dòng 11):
+    + Giải thích: Mỗi lần bấm nút Increment, code lại tạo ra một thẻ ```<li>``` mới và bind một hàm ẩn danh ```function() { deleteHistory(this); }``` vào nó. Việc này vừa tốn bộ nhớ vừa không tận dụng sức mạnh của Event Delegation (Ủy quyền sự kiện).
+- Lỗi Ép kiểu dữ liệu (Type Coercion) khi tải LocalStorage (Dòng 44):
+    + Giải thích: ```localStorage.getItem("count")``` trả về một chuỗi (string). Khi thực hiện count++ hoặc count-- ở các lần bấm tiếp theo, JavaScript sẽ thực hiện phép cộng chuỗi (ví dụ: "0" + 1 = "01"). Cần ép kiểu về dạng số bằng  ```parseInt()``` hoặc dấu +.
+- Lỗi giá trị mặc định của count khi LocalStorage trống (Dòng 44):
+    + Giải thích: Trong lần đầu tiên người dùng vào trang, LocalStorage chưa có dữ liệu -> ```getItem``` trả về null. Ép kiểu dữ liệu của null sẽ làm hỏng biến đếm. Cần có giá trị fallback mặc định là 0.
+- Lỗi bảo mật / Hiệu năng innerHTML không cần thiết (Dòng 6 & Dòng 20):
+    + Giải thích: Giá trị hiển thị của count hoàn toàn là text thuần túy. Sử dụng ```innerHTML``` bắt trình duyệt phải chạy bộ phân tích cú pháp HTML (HTML parser) một cách dư thừa và kém an toàn. Nên thay bằng ```textContent```.
+
+- **Sửa lại code:**
+```
+// App: Counter with history
+const countDisplay = document.querySelector(".count");
+const historyList = document.getElementById("history");
+let count = 0;
+
+// 1. Nút tăng giá trị (Increment)
+document.querySelector("#incrementBtn").addEventListener("click", function() {
+    count++;
+    countDisplay.textContent = count; // Thay bằng textContent cho an toàn và nhanh hơn
+    
+    // Lưu history
+    const li = document.createElement("li");
+    li.textContent = "Count changed to " + count;
+    // Bỏ việc gán addEventListener tại đây để chống rò rỉ bộ nhớ (Memory Leak)
+    historyList.append(li);
+});
+
+// 2. SỬA LỖI: Đổi "onclick" thành "click"
+document.querySelector("#decrementBtn").addEventListener("click", function() {
+    count--;
+    countDisplay.textContent = count;
+});
+
+// 3. SỬA LỖI: Sửa việc ghi đè biến DOM và sửa gán innerHTML bằng chuỗi rỗng thay vì null
+document.querySelector("#resetBtn").addEventListener("click", () => {
+    count = 0;
+    countDisplay.textContent = count; 
+    historyList.innerHTML = ""; 
+});
+
+// 4. TỐI ƯU: Sử dụng Event Delegation cho danh sách history
+// Lắng nghe trực tiếp tại thẻ cha, bấm vào li nào thì xóa li đó
+historyList.addEventListener("click", (e) => {
+    if (e.target && e.target.tagName === "LI") {
+        e.target.remove(); // Cú pháp hiện đại, ngắn gọn hơn removeChild
+    }
+});
+
+// 5. SỬA LỖI: Thêm dấu ngoặc () vào hàm item.remove()
+document.querySelector("#clearHistory").addEventListener("click", () => {
+    const items = historyList.querySelectorAll("li");
+    items.forEach(item => {
+        item.remove(); 
+    });
+});
+
+// 6. Lưu trạng thái vào localStorage khi đóng/refresh trang
+window.addEventListener("beforeunload", () => {
+    localStorage.setItem("count", count);
+    localStorage.setItem("history", historyList.innerHTML); // Lưu cấu trúc li cũ
+});
+
+// 7. SỬA LỖI: Tải dữ liệu từ localStorage và ép kiểu số, chống lỗi null
+window.addEventListener("load", () => {
+    const savedCount = localStorage.getItem("count");
+    // Ép kiểu chuỗi sang Số, nếu chưa có dữ liệu (null) thì mặc định lấy số 0
+    count = savedCount ? parseInt(savedCount, 10) : 0;
+    countDisplay.textContent = count;
+
+    const savedHistory = localStorage.getItem("history");
+    if (savedHistory) {
+        historyList.innerHTML = savedHistory;
+    }
+});
+```

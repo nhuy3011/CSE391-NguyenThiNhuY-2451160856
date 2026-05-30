@@ -82,3 +82,99 @@ Kiểm tra xem phản hồi từ server có thành công hay không (HTTP status
 - Network Error (Lỗi mạng): Có lỗi kết nối vật lý như mất mạng Internet, DNS bị lỗi, Server bị sập hoàn toàn không thể phản hồi, hoặc bị chặn bởi chính sách CORS. (Lúc này fetch sẽ tự động reject).
 - Lỗi do lập trình viên tự ném ra (throw new Error): Chính là đoạn code if (!response.ok) { throw new Error(...) }. Khi gặp các lỗi HTTP như 404 hay 500, bản thân fetch không tự coi là lỗi (nó vẫn kết nối thành công tới server), nên ta phải tự throw để catch có thể bắt được.
 - JSON Parse Error (Lỗi cú pháp JSON): Nếu server phản hồi thành công (ví dụ 200 OK) nhưng dữ liệu trả về lại là một chuỗi HTML lỗi hoặc text thông thường chứ không phải format JSON hợp lệ, hàm response.json() sẽ bị lỗi và khối catch sẽ bắt được lỗi này.
+
+## Câu A3 (5đ) — Promise States
+- Sơ đồ 3 trạng thái của Promise:
+```
++-------------------+
+                  |      PENDING      |  (Đang chờ xử lý,
+                  |                   |   chưa có kết quả)
+                  +-------------------+
+                    /               \
+          resolve() /                 \ reject()
+                   /                   \
+                  v                     v
+        +-------------------+     +-------------------+
+        |     FULFILLED     |     |     REJECTED      |
+        |  (Thành công,     |     |  (Thất bại,       |
+        |   có dữ liệu)     |     |   có lỗi/error)   |
+        +-------------------+     +-------------------+
+```
+- Callback Hell là gì?
+  + Callback Hell (hay còn gọi là Pyramid of Doom - Kim tự tháp hủy diệt) là hiện tượng các hàm bất đồng bộ lồng nhau quá nhiều tầng thông qua các hàm gọi lại (callback).
+  + Khi một tác vụ bất đồng bộ phụ thuộc vào kết quả của một tác vụ bất đồng bộ trước đó, lập trình viên buộc phải viết mã lồng vào trong. Khi số lượng tác vụ tăng lên, mã nguồn sẽ phát triển theo chiều ngang (bị thụt đầu dòng quá sâu), dẫn đến cấu trúc code có dạng hình tam giác/kim tự tháp.
+  + Hậu quả của Callback Hell:
+    + Cực kỳ khó đọc và bảo trì: Rất khó để tracking luồng chạy của dữ liệu.
+    + Trầm cảm khi debug: Việc bắt lỗi (try...catch hoặc xử lý tham số err) ở từng tầng trở nên rối rắm.
+    + Khó tái sử dụng: Các hàm bị bó chặt và phụ thuộc khăng khít vào nhau.
+- Ví dụ: Ví dụ 4 cấp callback hell → Refactor thành async/await.
+**Bài toán giả định:** Quy trình mua hàng online gồm 4 bước liên tiếp: Đăng nhập (login) -> 2. Lấy giỏ hàng (getCart) -> 3. Thanh toán (checkout) -> 4. Gửi email xác nhận (sendEmail).
+  
+❌ Phiên bản "Callback Hell" (4 cấp lồng nhau)JavaScript// Giả định các hàm nhận vào callback cuối cùng
+```
+function login(username, callback) {
+    setTimeout(() => callback(null, { userId: 1, name: username }), 500);
+}
+function getCart(userId, callback) {
+    setTimeout(() => callback(null, { cartId: 101, items: ['Laptop'] }), 500);
+}
+function checkout(cartId, callback) {
+    setTimeout(() => callback(null, { orderId: 999, total: 1500 }), 500);
+}
+function sendEmail(orderId, callback) {
+    setTimeout(() => callback(null, `Email sent for order ${orderId}`), 500);
+}
+
+// Thực thi bóc tách dữ liệu theo kiểu Callback Hell
+login("john_doe", (err, user) => {
+    if (err) return console.error(err);
+    console.log("Logged in:", user.name);
+
+    getCart(user.userId, (err, cart) => {
+        if (err) return console.error(err);
+        console.log("Cart fetched:", cart.items);
+
+        checkout(cart.cartId, (err, order) => {
+            if (err) return console.error(err);
+            console.log("Checkout success:", order.orderId);
+
+            sendEmail(order.orderId, (err, result) => {
+                if (err) return console.error(err);
+                console.log(result); // Cấp lồng thứ 4
+                // Hết phim! Code bị thụt lề thành hình kim tự tháp.
+            });
+        });
+    });
+});
+```
+**Phiên bản nâng cấp sạch đẹp với Async/Await.** Để dùng được async/await, trước hết ta chuyển đổi các hàm callback truyền thống thành các hàm trả về Promise (đây gọi là quá trình Promisify).
+```
+const login = (username) => new Promise(resolve => setTimeout(() => resolve({ userId: 1, name: username }), 500));
+const getCart = (userId) => new Promise(resolve => setTimeout(() => resolve({ cartId: 101, items: ['Laptop'] }), 500));
+const checkout = (cartId) => new Promise(resolve => setTimeout(() => resolve({ orderId: 999, total: 1500 }), 500));
+const sendEmail = (orderId) => new Promise(resolve => setTimeout(() => resolve(`Email sent for order ${orderId}`), 500));
+
+// Tiến hành Refactor quy trình xử lý chính
+async function runOrderProcess() {
+    try {
+        const user = await login("john_doe");
+        console.log("Logged in:", user.name);
+
+        const cart = await getCart(user.userId);
+        console.log("Cart fetched:", cart.items);
+
+        const order = await checkout(cart.cartId);
+        console.log("Checkout success:", order.orderId);
+
+        const result = await sendEmail(order.orderId);
+        console.log(result);
+        
+    } catch (error) {
+        console.error("Quy trình bị lỗi tại bước nào đó:", error);
+    }
+}
+
+// Chạy hàm quy trình
+runOrderProcess();
+```
+

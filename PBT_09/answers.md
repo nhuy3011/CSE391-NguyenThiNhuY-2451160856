@@ -184,3 +184,38 @@ window.addEventListener("load", () => {
     }
 });
 ```
+
+## Câu C2 (7đ) — Performance
+1. Tại sao gắn Event lên 1000 elements riêng lẻ là Bad Practice?
+Việc sử dụng vòng lặp để gắn addEventListener lên 1000 phần tử riêng biệt là một hướng tiếp cận tồi (Bad Practice) vì hai lý do lớn sau:
+- Tốn tài nguyên bộ nhớ (Memory Consumption): Mỗi lần gọi addEventListener, trình duyệt phải khởi tạo và cấp phát một vùng nhớ cho Event Listener Object (đối tượng lắng nghe sự kiện) cùng hàm callback đi kèm. Gắn cho 1000 phần tử nghĩa là bạn ép trình duyệt quản lý 1000 đối tượng riêng biệt, dẫn đến ngốn RAM vô ích.
+- Rò rỉ bộ nhớ & Khó quản lý (Memory Leaks): Khi một phần tử bị xóa khỏi DOM bằng JavaScript, nếu bạn không gỡ bỏ sự kiện (removeEventListener) theo cách thủ công, trình duyệt có thể giữ lại hàm callback đó trong bộ nhớ, gây ra hiện tượng rò rỉ RAM.
+- Vấn đề với phần tử động: Nếu bạn thêm phần tử thứ 1001 vào trang bằng mã code, phần tử mới này sẽ không có sự kiện, bạn lại phải viết thêm code để gắn sự kiện cho riêng nó.
+- Cách Event Delegation giải quyết vấn đề
+  + Event Delegation (Ủy quyền sự kiện) tận dụng cơ chế Event Bubbling (Sự kiện nổi bọt) của JavaScript. Thay vì gắn 1000 listener cho 1000 con, ta chỉ gắn duy nhất 1 listener lên phần tử cha bao ngoài chúng.
+  + Khi bất kỳ phần tử con nào được click, sự kiện click đó sẽ tự động "nổi bọt" (lan truyền) ngược lên phần tử cha. Tại phần tử cha, ta chỉ cần dùng thuộc tính e.target để kiểm tra chính xác phần tử con nào vừa được click và xử lý logic tương ứng.
+  + Kết quả: Từ 1000 listeners giảm xuống chỉ còn 1 listener duy nhất, tiết kiệm bộ nhớ tối đa và tự động áp dụng luôn cho cả các phần tử con được thêm mới sau này.
+
+2. Refactor mã nguồn sử dụng DocumentFragment
+Đoạn mã đã được tối ưu:
+```
+// Tạo một DocumentFragment trong bộ nhớ tạm
+const fragment = document.createDocumentFragment();
+
+for (let i = 0; i < 1000; i++) {
+    const div = document.createElement("div");
+    div.textContent = `Item ${i}`;
+    
+    // Gắn phần tử trực tiếp vào fragment (Không gây reflow ở cây DOM thật)
+    fragment.appendChild(div); 
+}
+
+// Thêm fragment vào body — Lúc này toàn bộ 1000 divs được chèn vào DOM cùng 1 lúc
+document.body.appendChild(fragment); // ← Chỉ gây ra đúng 1 lần Reflow!
+```
+**Tại sao sử dụng DocumentFragment lại nhanh hơn?**
+Để hiểu tại sao nó nhanh hơn, chúng ta cần nắm được cách trình duyệt hiển thị một trang web:
+- Mã nguồn gốc (Tệ): Mỗi khi gọi document.body.appendChild(div), bạn đang trực tiếp can thiệp vào cây DOM hiển thị trên màn hình. Trình duyệt bắt buộc phải dừng lại để tính toán lại kích thước, vị trí của các phần tử xung quanh (Reflow) và vẽ lại giao diện (Repaint). Thực hiện việc này 1000 lần liên tục sẽ làm nghẽn luồng xử lý (UI thread), gây hiện tượng giật, lag trang.
+- Giải pháp với DocumentFragment (Tối ưu): DocumentFragment hoạt động giống như một "DOM ảo thu nhỏ" nằm hoàn toàn trong bộ nhớ RAM (Off-screen DOM).
+- Khi bạn thực hiện vòng lặp fragment.appendChild(div), các thao tác này diễn ra ngầm nên hoàn toàn không gây ra bất kỳ đợt Reflow hay Repaint nào trên màn hình thật.
+- Khi vòng lặp kết thúc, lệnh document.body.appendChild(fragment) sẽ đổ toàn bộ 1000 phần tử vào trang web cùng một lúc. Trình duyệt chỉ cần tính toán lại cấu trúc layout đúng một lần duy nhất, giúp tối ưu hiệu năng render lên gấp nhiều lần.

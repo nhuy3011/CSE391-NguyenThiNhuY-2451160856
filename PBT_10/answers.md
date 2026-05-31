@@ -281,3 +281,101 @@ async function fetchWithRetry(url, maxRetries = 3, delay = 1000, options = {}) {
 //     .then(res => console.log("Thành công:", res))
 //     .catch(err => alert(err.message));
 ```
+
+## Câu C2 (10đ) — Promise.all vs Promise.allSettled vs Promise.race
+Bảng so sánh 4 phương thức xử lý Promise
+
+| Phương pháp | Khi nào giải quyết (Fulfilled)? | Khi nào từ chối (Rejected)? | Trường hợp sử dụng thực tế |
+| :-- | :--| :--| :-- |
+| Promise.all()	| Khi TẤT CẢ các Promise trong mảng đều thành công. Trả về mảng kết quả theo đúng thứ tự.	| Chỉ cần MỘT Promise thất bại. Nó sẽ hủy bỏ lập tức và ném ra lỗi của Promise đó (All-or-Nothing).	| Đồng bộ hóa các dữ liệu phụ thuộc nhau (ví dụ: Tải chi tiết bài viết + Danh sách bình luận của bài viết đó). |
+| Promise.allSettled()	| Khi TẤT CẢ các Promise đều đã chạy xong (bất kể thành công hay thất bại). Không bao giờ bị từ chối.	| Không bao giờ bị từ chối. Luôn trả về một mảng chứa trạng thái và kết quả/lỗi của từng Promise.	| Xây dựng các Dashboard tổng hợp, nạp các widget độc lập hoặc thực hiện tải file hàng loạt (Bulk Upload). |
+| Promise.race()	| Khi có MỘT Promise đầu tiên có kết quả (bất kể thành công hay thất bại). Ai nhanh nhất thì lấy.	| Khi Promise nhanh nhất trong mảng bị thất bại. | Thiết lập cơ chế Timeout cho các yêu cầu mạng (Network Request Timeout). |
+| Promise.any()	| Khi có MỘT Promise đầu tiên thành công. Bản chất là đi tìm người thành công nhanh nhất.	| Khi TẤT CẢ các Promise trong mảng đều thất bại. Trả về một AggregateError.	| Gọi dữ liệu từ nhiều Server bản sao (Mirrors/CDNs), lấy dữ liệu từ server nào phản hồi thành công nhanh nhất. |
+
+**Kịch bản Code thực tế cho từng phương pháp**
+1. Promise.all() — Kịch bản: Khởi tạo dữ liệu trang chi tiết sản phẩm
+- Khi vào trang sản phẩm, bạn cần gọi đồng thời thông tin sản phẩm và danh sách đánh giá. Nếu API thông tin sản phẩm lỗi, trang web không thể hiển thị gì cả, nên ta dùng Promise.all.
+```
+async function loadProductDetailPage(productId) {
+    const productApi = fetch(`https://api.example.com/products/${productId}`).then(r => r.json());
+    const reviewsApi = fetch(`https://api.example.com/products/${productId}/reviews`).then(r => r.json());
+
+    try {
+        // Chạy song song, nếu 1 trong 2 lỗi (đặc biệt là productApi) -> Nhảy xuống catch
+        const [product, reviews] = await Promise.all([productApi, reviewsApi]);
+        
+        console.log("Hiển thị trang sản phẩm:", product.name);
+        console.log(`Đã nạp ${reviews.length} đánh giá.`);
+    } catch (error) {
+        console.error("Lỗi nghiêm trọng, không thể mở trang:", error.message);
+        // Hướng xử lý: Hiển thị giao diện báo lỗi hoặc Redirect sang trang 404
+    }
+}
+```
+2. Promise.allSettled() — Kịch bản: Gửi Email Marketing hàng loạt
+- Bạn cần gửi thông báo cho 3 khách hàng. Nếu khách hàng thứ 2 bị lỗi email, hệ thống vẫn phải tiếp tục gửi cho khách hàng 1 và 3, đồng thời báo cáo lại cuối ngày email nào thất bại.
+```
+async function sendBulkEmails(users) {
+    // Giả lập hàm gửi email trả về một Promise
+    const sendEmail = (user) => fetch(`/api/send-email`, { method: 'POST', body: JSON.stringify(user) });
+
+    const emailPromises = users.map(user => sendEmail(user));
+    
+    // Đợi tất cả chạy xong, không quan tâm có ai lỗi hay không
+    const results = await Promise.allSettled(emailPromises);
+
+    results.forEach((result, index) => {
+        const user = users[index];
+        if (result.status === "fulfilled") {
+            console.log(`✅ Gửi thành công cho: ${user.email}`);
+        } else {
+            console.error(`❌ Gửi thất bại cho: ${user.email}. Lý do: ${result.reason}`);
+            // Hướng xử lý: Lưu vào hàng đợi để gửi lại sau (Retry Queue)
+        }
+    });
+}
+```
+3. Promise.race() — Kịch bản: Khống chế thời gian tải File nặng (Timeout)
+- Bạn cho phép người dùng tải một file báo cáo PDF. Nếu quá 5 giây mà hệ thống chưa xử lý xong, ta phải ngắt và báo lỗi "Hệ thống bận" để tránh nghẽn băng thông của user.
+```
+function downloadReport(reportId) {
+    const downloadTask = fetch(`/api/reports/${reportId}`).then(res => res.blob());
+    
+    // Tạo một Promise tự động reject sau 5 giây
+    const timeoutTask = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Yêu cầu quá hạn (Timeout 5000ms)")), 5000)
+    );
+
+    // Cuộc đua: downloadTask thắng -> có file; timeoutTask thắng -> báo lỗi
+    Promise.race([downloadTask, timeoutTask])
+        .then(fileBlob => {
+            console.log("Tải file thành công, tiến hành lưu file...", fileBlob);
+        })
+        .catch(error => {
+            console.error("Thông báo UI:", error.message);
+            // Hướng xử lý: Hiển thị popup "Mạng chậm, vui lòng thử lại sau"
+        });
+}
+```
+4. Promise.any() — Kịch bản: Lấy ảnh từ các máy chủ dự phòng (CDNs Mirror)
+- Ứng dụng của bạn lưu trữ hình ảnh trên 3 server CDN quốc tế khác nhau (Châu Á, Châu Âu, Châu Mỹ). Bạn muốn người dùng lấy được ảnh nhanh nhất có thể từ server có tốc độ phản hồi tốt nhất vào thời điểm đó.
+```
+async function fetchAvatarFromCDNs(userId) {
+    const cdnAsia = fetch(`https://asia.cdn.com/avatars/${userId}`).then(r => r.blob());
+    const cdnAmerica = fetch(`https://america.cdn.com/avatars/${userId}`).then(r => r.blob());
+    const cdnEurope = fetch(`https://europe.cdn.com/avatars/${userId}`).then(r => r.blob());
+
+    try {
+        // Lấy dữ liệu từ CDN nào trả về "thành công" nhanh nhất
+        const fastestAvatarBlob = await Promise.any([cdnAsia, cdnAmerica, cdnEurope]);
+        
+        // Hiển thị ảnh lên giao diện ngay lập tức
+        const imgUrl = URL.createObjectURL(fastestAvatarBlob);
+        document.getElementById('avatar').src = imgUrl;
+    } catch (aggregateError) {
+        // Chỉ chạy vào đây nếu CẢ 3 CDN đều sập (tất cả đều bị reject)
+        console.error("Tất cả CDNs đều lỗi:", aggregateError.errors);
+        document.getElementById('avatar').src = "/images/default-avatar.png"; // Dùng ảnh local dự phòng
+    }
+}
+```

@@ -1,7 +1,7 @@
-import DeleteItem from "./tier_6/DeleteItem";
+import UpdateItem from "./tier_6/UpdateItem";
 
 function App() {
-    return <DeleteItem />;
+    return <UpdateItem />;
 }
 
 export default App;

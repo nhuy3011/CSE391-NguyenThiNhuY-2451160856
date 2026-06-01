@@ -41,10 +41,14 @@ function UserProfile() {
                 </tbody>
             </table>
         </div>
-    );
+    );<img width="1863" height="951" alt="Screenshot 2026-06-01 140134" src="https://github.com/user-attachments/assets/91f9c3b7-ff02-4ba9-8972-266c308bc6fd" />
+
 }
 export default UserProfile;
 ```
+**Chạy**
+<img width="1863" height="951" alt="Screenshot 2026-06-01 140134" src="https://github.com/user-attachments/assets/51cf7d1a-2460-4b5e-ad5a-0bceb3a8f465" />
+
 **Bài 2:** Viết thành phầnProductInfo
 ```
 function ProductInfo() {
@@ -66,3 +70,6 @@ function ProductInfo() {
 
 export default ProductInfo;
 ```
+**Chạy**
+<img width="1913" height="1005" alt="Screenshot 2026-06-01 140034" src="https://github.com/user-attachments/assets/4eed9adf-bad0-4864-8f9f-00427a7708c1" />
+

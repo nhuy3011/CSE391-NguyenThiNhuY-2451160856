@@ -7,3 +7,10 @@
 <img width="1786" height="893" alt="Screenshot 2026-06-01 160831" src="https://github.com/user-attachments/assets/6307136f-4c7d-408d-abeb-3aa7bef1f986" />
 <img width="1876" height="906" alt="Screenshot 2026-06-01 160910" src="https://github.com/user-attachments/assets/fe05d0ef-38ab-4d47-9dab-ef16f9a93dbf" />
 <img width="1843" height="912" alt="Screenshot 2026-06-01 160958" src="https://github.com/user-attachments/assets/280f5532-7f89-492f-a1df-79d266c716db" />
+
+## Bài 4.2 — useState với chuỗi (Input) (10 phút)
+**Thử nghiệm**
+1. Đếm số ký tự đã nhập (hiển thị X/100)
+2. Hiển thị "Hợp lệ email" nếu có ký tự "@"
+3. Tạo ô nhập mật khẩu với nút ẩn/hiện tại
+<img width="1827" height="907" alt="Screenshot 2026-06-01 161339" src="https://github.com/user-attachments/assets/0bef031f-844f-47be-99df-bcdcbaf31398" />

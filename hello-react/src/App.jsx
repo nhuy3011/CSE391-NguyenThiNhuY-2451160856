@@ -1,7 +1,7 @@
-import InputEvents from "./tier_5/InputEvents";
+import KeyboardEvents from "./tier_5/KeyboardEvents";
 
 function App() {
-    return <InputEvents />;
+    return <KeyboardEvents />;
 }
 
 export default App;

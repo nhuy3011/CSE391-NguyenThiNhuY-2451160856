@@ -40,3 +40,18 @@
 3. Mở Console → tìm thấy nhật ký "render"几次?
 - Không tìm thấy nhật ký 'render' nào cả (0 lần)!
 - Bởi vì trong đoạn code mẫu GoodCounter ban đầu, người biên soạn bài tập chưa hề viết dòng lệnh ```console.log()``` nào ở trong thân hàm để thông báo mỗi khi component re-render. Lệnh ```console.log("Count:", count);``` duy nhất lại nằm bó hẹp bên trong hàm handleClick của bản BadCounter mất rồi!
+
+## Bài 1.3 — Luồng hoạt động (Flow) (5 phút)
+- Câu hỏi 1: Tình huống bấm liên tục
+Nếu bạn đang ở Bước 4 (Màn hình hiện 🎉 Bước 4: Hoàn thành!), bạn cố tình bấm nút Bước tiếp theo → thêm một lần nữa.
+Biến step sẽ tăng lên bằng mấy?
+Giao diện ở hộp màu xám lúc này sẽ hiển thị dòng chữ gì?
+Hàm FlowDemo có bị re-render không (nhìn dòng log 🔄 Component render! có tăng thêm không)?
+- Câu hỏi 2: Tình huống "Click Đơ" (Rất quan trọng)
+Nếu bạn đang ở Bước 1 (vừa tải lại trang), bạn bấm nút Quay lại đầu (nút này chạy lệnh ```setStep(1)```).
+Hãy nhìn vào Console F12 xem dòng chữ 🔄 Component render! có bị chạy lại không?
+Tại sao? 
+
+**Đáp án**
+- Đáp án câu 1: Biến step tăng lên thành 5. Hộp màu xám sẽ trống trơn (không hiện gì cả) vì không có điều kiện nào cho step === 5. Hàm vẫn re-render đều đặn vì giá trị thay đổi từ 4 lên 5.
+- Đáp án câu 2: Dòng ```🔄 Component render!``` KHÔNG hề chạy lại! React cực kỳ thông minh, trước khi ra lệnh re-render, nó sẽ so sánh giá trị mới và giá trị cũ. Nếu bạn đặt setStep(1) khi đang ở bước 1 (Dữ liệu không hề thay đổi), React sẽ triệt tiêu lệnh re-render để tiết kiệm hiệu năng cho máy tính. Người ta gọi cơ chế này là Bailout (Hủy bỏ render thừa).

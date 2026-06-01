@@ -1,12 +1,6 @@
-import LifecycleDemo from './LifecycleDemo'; // Nối file mới vào đây
+import CounterDemo from './CounterDemo';
 
 function App() {
-    return (
-        <div>
-            {/* Gọi Component LifecycleDemo ra màn hình */}
-            <LifecycleDemo /> 
-        </div>
-    );
+    return <CounterDemo />;
 }
-
 export default App;

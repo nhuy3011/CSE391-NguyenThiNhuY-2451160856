@@ -1,7 +1,7 @@
-import StringState from "./tier_4/StringState";
+import BooleanState from "./tier_4/BooleanState";
 
 function App() {
-    return <StringState />;
+    return <BooleanState />;
 }
 
 export default App;

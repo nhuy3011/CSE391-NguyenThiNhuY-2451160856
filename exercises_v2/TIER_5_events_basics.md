@@ -22,3 +22,11 @@
 3. Tạo phím tắt Ctrl+D để đổi màu nền
 <img width="1835" height="917" alt="Screenshot 2026-06-01 163627" src="https://github.com/user-attachments/assets/840a7ec6-5946-4cca-bac6-b51bd3565249" />
 <img width="1707" height="871" alt="Screenshot 2026-06-01 163658" src="https://github.com/user-attachments/assets/e67b08f5-5917-4e11-bff8-7522b356307a" />
+
+## Bài 5.4 — Hình thức Sự kiện (10 phút)
+**Thử nghiệm**
+1. Xác thực email phải có @
+2. Thêm trường "Xác nhận mật khẩu"
+3. Hiển thị lỗi thời gian thực khi nhập sai
+<img width="1788" height="812" alt="Screenshot 2026-06-01 163948" src="https://github.com/user-attachments/assets/edef60a2-3164-4828-898e-0a57fd82c692" />
+<img width="1827" height="915" alt="Screenshot 2026-06-01 164015" src="https://github.com/user-attachments/assets/a2d53d62-9faf-40fe-9259-48bba4a5c5b3" />

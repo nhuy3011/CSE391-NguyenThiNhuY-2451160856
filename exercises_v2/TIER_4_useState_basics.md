@@ -14,3 +14,11 @@
 2. Hiển thị "Hợp lệ email" nếu có ký tự "@"
 3. Tạo ô nhập mật khẩu với nút ẩn/hiện tại
 <img width="1827" height="907" alt="Screenshot 2026-06-01 161339" src="https://github.com/user-attachments/assets/0bef031f-844f-47be-99df-bcdcbaf31398" />
+
+## Bài 4.3 — useState với boolean (Toggle) (10 phút)
+**Thử nghiệm**
+1. Tạo nút "Hiện/Ẩn mật khẩu" (loại nhập mật khẩu/văn bản)
+2. Tạo đàn accordion (click tiêu đề để mở/đóng nội dung)
+3. Tạo nút "Bật/Tắt" với biểu tượng bóng đèn 💡
+<img width="1915" height="1001" alt="Screenshot 2026-06-01 161817" src="https://github.com/user-attachments/assets/ef8b8abb-52d2-422e-a51f-81d275a27fa6" />
+<img width="1843" height="836" alt="Screenshot 2026-06-01 161833" src="https://github.com/user-attachments/assets/88ce5af8-a357-4dd7-8239-f03804c04581" />

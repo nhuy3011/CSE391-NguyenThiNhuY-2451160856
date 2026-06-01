@@ -17,3 +17,26 @@
   + Trạng thái bên trong nó thay đổi (State thay đổi): Đây là lúc ta dùng đến useState (sẽ học ở Tier 4). Ví dụ: Khi bạn bấm nút tăng số lượng hàng trong giỏ, số thay đổi ➡️ giao diện phải vẽ lại số mới.
   + Dữ liệu từ bên ngoài truyền vào thay đổi (Props thay đổi): (Sẽ học ở các Tier sau).
   + Component cha của nó bị Re-render: Khi component cha (ở đây là App) bị ép phải vẽ lại giao diện, thì tất cả các con nằm bên trong nó (như LifecycleDemo) cũng sẽ bị gọi lại theo dây chuyền.
+
+## Bài 1.2 — Biến "bình thường" vs useState (12 phút)
+**Thử nghiệm**
+1. Chạy BadCounter→ nút được nhấn → thấy gì?
+<img width="1860" height="897" alt="Screenshot 2026-06-01 141220" src="https://github.com/user-attachments/assets/a7792430-853d-4c43-b991-71d8b68a13c8" />
+
+- **Hiện tượng trên màn hình:** Số 0 đứng im bất động, bấm mỏi tay không đổi.
+- **Hiện tượng trong Console (F12):** Log vẫn chạy đều đặn: 1, 2, 3, 4, 5...
+- **Bản chất:** Biến count thực chất có tăng, nhưng nó chỉ tăng thầm lặng trong bộ nhớ máy tính. React không hề hay biết biến này bị thay đổi, nên nó không kích hoạt lệnh vẽ lại giao diện (Re-render). Trình duyệt vẫn giữ nguyên HTML cũ của lần render đầu tiên.
+
+2. Chạy GoodCounter→ nút được nhấn → thấy gì?
+<img width="1860" height="897" alt="Screenshot 2026-06-01 141220" src="https://github.com/user-attachments/assets/5bb3ddea-c4c9-49f7-b8de-4f4f8f9905e7" />
+
+
+- **Hiện tượng trên màn hình:** Bấm một phát số nhảy lên 1, bấm phát nữa lên 2 cực mượt.
+- **Hiện tượng trong Console (F12):** Cứ mỗi lần bạn bấm nút, dòng chữ ```🔄 [HÀM GOODCOUNTER ĐANG ĐƯỢC GỌI LẠI...]``` lại xuất hiện thêm một lần!
+- **Bản chất:** Khi bạn gọi hàm quyền lực ```setCount()```, React sẽ lập tức thực hiện 2 việc:
+  + Ghi đè giá trị mới vào biến count.
+  + Ép component GoodCounter phải chạy lại từ đầu (Re-render) để nạp giá trị mới vào thẻ ```<p>```
+
+3. Mở Console → tìm thấy nhật ký "render"几次?
+- Không tìm thấy nhật ký 'render' nào cả (0 lần)!
+- Bởi vì trong đoạn code mẫu GoodCounter ban đầu, người biên soạn bài tập chưa hề viết dòng lệnh ```console.log()``` nào ở trong thân hàm để thông báo mỗi khi component re-render. Lệnh ```console.log("Count:", count);``` duy nhất lại nằm bó hẹp bên trong hàm handleClick của bản BadCounter mất rồi!

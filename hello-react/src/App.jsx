@@ -1,4 +1,4 @@
-import StringState from "./tier_5/StringState";
+import StringState from "./tier_4/StringState";
 
 function App() {
     return <StringState />;

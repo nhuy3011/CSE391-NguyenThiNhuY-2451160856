@@ -1,7 +1,7 @@
-import NumberState from "./tier_4/NumberState";
+import StringState from "./tier_5/StringState";
 
 function App() {
-    return <NumberState />;
+    return <StringState />;
 }
 
 export default App;

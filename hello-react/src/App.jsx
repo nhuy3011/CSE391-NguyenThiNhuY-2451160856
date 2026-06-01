@@ -1,39 +1,51 @@
-// Triệu hồi toàn bộ các component từ thư mục con components/
-import Header from "./components/Header";
-import ProductCard from "./components/ProductCard";
-import Footer from "./components/Footer";
+import UserCard from "./components/UserCard";
+import PriceTag from "./components/PriceTag";
 
 function App() {
-    // Mảng dữ liệu chứa thông tin các dòng điện thoại khác nhau
-    const products = [
-        { id: 1, name: "iPhone 15 Pro", price: "25.000.000", image: "https://picsum.photos/200/150?random=1" },
-        { id: 2, name: "Samsung S24 Ultra", price: "22.000.000", image: "https://picsum.photos/200/150?random=2" },
-        { id: 3, name: "Xiaomi 14 Ultra", price: "15.000.000", image: "https://picsum.photos/200/150?random=3" }
+    // Mảng dữ liệu cho thử nghiệm 3 chiếc UserCard khác nhau
+    const users = [
+        { id: 1, name: "Nguyễn Văn Minh", email: "minh.nv@tlu.edu.vn", avatar: "https://i.pravatar.cc/150?img=33" },
+        { id: 2, name: "Trần Thị An", email: "an.tt@tlu.edu.vn", avatar: "https://i.pravatar.cc/150?img=47" },
+        { id: 3, name: "Lê Hoàng Linh", email: "linh.lh@tlu.edu.vn", avatar: "https://i.pravatar.cc/150?img=12" }
     ];
 
     return (
-        <div style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#f8f9fa", minHeight: "100vh" }}>
-            {/* Lắp ghép Header xịn */}
-            <Header />
+        <div style={{ padding: "30px", backgroundColor: "#f5f7fa", minHeight: "100vh", fontFamily: "Arial, sans-serif" }}>
+            
+            {/* =========================================================
+                THỬ NGHIỆM 1 & 3: Hiển thị 3 danh sách UserCard khác nhau
+                ========================================================= */}
+            <h2 style={{ color: "#2c3e50" }}>👥 Thành viên hệ thống</h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "4px" }}>
+                {users.map(user => (
+                    <UserCard 
+                        key={user.id}
+                        name={user.name}     // Truyền chuỗi chữ (String)
+                        email={user.email}   // Truyền chuỗi chữ (String)
+                        avatar={user.avatar} // Truyền chuỗi chữ (String)
+                    />
+                ))}
+            </div>
 
-            <main style={{ padding: "20px" }}>
-                <h2 style={{ textAlign: "center", color: "#333", marginBottom: "20px" }}>Danh sách sản phẩm nổi bật</h2>
-                
-                {/* Khu vực rải thẻ Card */}
-                <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "10px" }}>
-                    {products.map(product => (
-                        <ProductCard 
-                            key={product.id} // Giúp React định vị phần tử (Học ở bài 2.3)
-                            name={product.name}   // Truyền Props tên
-                            price={product.price} // Truyền Props giá
-                            image={product.image} // Truyền Props ảnh
-                        />
-                    ))}
+            <hr style={{ margin: "40px 0", border: "0", borderTop: "1px solid #ddd" }} />
+
+            {/* =========================================================
+                THỬ NGHIỆM 2: Hiển thị PriceTag với các kiểu số khác nhau
+                ========================================================= */}
+            <h2 style={{ color: "#2c3e50", marginBottom: "20px" }}>🏷️ Thử nghiệm nhãn giá (PriceTag)</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                <div>
+                    <p style={{ margin: "0 0 5px 0", fontSize: "14px", color: "#666" }}>Sản phẩm có giảm giá:</p>
+                    {/* Cách truyền dữ liệu kiểu Số (Number) bắt buộc phải bọc trong dấu ngoặc nhọn {} */}
+                    <PriceTag originalPrice={25000000} salePrice={21990000} />
                 </div>
-            </main>
 
-            {/* Lắp ghép Footer xịn */}
-            <Footer />
+                <div>
+                    <p style={{ margin: "0 0 5px 0", fontSize: "14px", color: "#666" }}>Sản phẩm bán đúng giá gốc (Không giảm):</p>
+                    <PriceTag originalPrice={500000} salePrice={500000} />
+                </div>
+            </div>
+
         </div>
     );
 }

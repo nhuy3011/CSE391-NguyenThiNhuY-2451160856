@@ -15,3 +15,10 @@
 <img width="1858" height="908" alt="Screenshot 2026-06-01 163313" src="https://github.com/user-attachments/assets/48acf219-a577-4cd8-ac08-5b969b6c05b0" />
 <img width="1811" height="871" alt="Screenshot 2026-06-01 163332" src="https://github.com/user-attachments/assets/ca325d2f-a49c-4de0-ae0f-574aef130207" />
 
+## Bài 5.3 — Sự kiện bàn phím (10 phút)
+**Thử nghiệm**
+1. Tạo "trò chơi" mong đợi phím: hiện phím ngẫu nhiên, nhấn đúng để giành chiến thắng
+2. Di chuyển một ô vuông bằng mũi tên (↑↓←→)
+3. Tạo phím tắt Ctrl+D để đổi màu nền
+<img width="1835" height="917" alt="Screenshot 2026-06-01 163627" src="https://github.com/user-attachments/assets/840a7ec6-5946-4cca-bac6-b51bd3565249" />
+<img width="1707" height="871" alt="Screenshot 2026-06-01 163658" src="https://github.com/user-attachments/assets/e67b08f5-5917-4e11-bff8-7522b356307a" />

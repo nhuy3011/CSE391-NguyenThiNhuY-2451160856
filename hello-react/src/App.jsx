@@ -1,7 +1,7 @@
-import ClickEvents from "./tier_5/ClickEvents";
+import InputEvents from "./tier_5/InputEvents";
 
 function App() {
-    return <ClickEvents />;
+    return <InputEvents />;
 }
 
 export default App;

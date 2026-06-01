@@ -1,6 +1,6 @@
-import ConditionalDemo from './ConditionalDemo';
+import ListDemo from './ListDemo';
 
 function App() {
-    return <ConditionalDemo />;
+    return <ListDemo />;
 }
 export default App;

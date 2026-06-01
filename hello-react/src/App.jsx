@@ -1,7 +1,7 @@
-import FormEvents from "./tier_5/FormEvents";
+import ListBasics from "./tier_6/ListBasics";
 
 function App() {
-    return <FormEvents />;
+    return <ListBasics />;
 }
 
 export default App;

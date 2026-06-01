@@ -1,7 +1,7 @@
-import CreateItem from "./tier_6/CreateItem";
+import DeleteItem from "./tier_6/DeleteItem";
 
 function App() {
-    return <CreateItem />;
+    return <DeleteItem />;
 }
 
 export default App;

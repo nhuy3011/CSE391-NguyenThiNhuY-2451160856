@@ -1,7 +1,7 @@
-import KeyboardEvents from "./tier_5/KeyboardEvents";
+import FormEvents from "./tier_5/FormEvents";
 
 function App() {
-    return <KeyboardEvents />;
+    return <FormEvents />;
 }
 
 export default App;

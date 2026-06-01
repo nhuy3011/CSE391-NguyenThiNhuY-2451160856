@@ -1,6 +1,6 @@
-import FlowDemo from './FlowDemo';
+import SimpleVariables from './SimpleVariables';
 
 function App() {
-    return <App />; // Hoặc gọi trực tiếp <FlowDemo /> đều được nhé
+    return <SimpleVariables />;
 }
 export default App;

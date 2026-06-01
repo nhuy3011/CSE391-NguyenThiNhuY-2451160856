@@ -1,7 +1,7 @@
-import MultipleStates from "./tier_4/MultipleStates";
+import ClickEvents from "./tier_5/ClickEvents";
 
 function App() {
-    return <MultipleStates />;
+    return <ClickEvents />;
 }
 
 export default App;

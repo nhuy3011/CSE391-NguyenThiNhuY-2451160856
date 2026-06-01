@@ -1,6 +1,6 @@
-import SimpleVariables from './SimpleVariables';
+import ConditionalDemo from './ConditionalDemo';
 
 function App() {
-    return <SimpleVariables />;
+    return <ConditionalDemo />;
 }
 export default App;

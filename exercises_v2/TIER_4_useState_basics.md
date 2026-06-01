@@ -22,3 +22,11 @@
 3. Tạo nút "Bật/Tắt" với biểu tượng bóng đèn 💡
 <img width="1915" height="1001" alt="Screenshot 2026-06-01 161817" src="https://github.com/user-attachments/assets/ef8b8abb-52d2-422e-a51f-81d275a27fa6" />
 <img width="1843" height="836" alt="Screenshot 2026-06-01 161833" src="https://github.com/user-attachments/assets/88ce5af8-a357-4dd7-8239-f03804c04581" />
+
+## Bài 4.4 — Kết hợp nhiều useState (10 phút)
+**Thử nghiệm**
+1. Thêm trường "Email" vào biểu mẫu
+2. Xác thực: tuổi phải > 0 và < 100
+3. Hiển thị "Xin chào [tên]!" khi nhập xong
+<img width="1820" height="900" alt="Screenshot 2026-06-01 162445" src="https://github.com/user-attachments/assets/d4170231-c0d6-405a-b692-33e48a56df6b" />
+<img width="1876" height="918" alt="Screenshot 2026-06-01 162505" src="https://github.com/user-attachments/assets/0ac1f833-1c25-4062-bef0-5178235a3c36" />

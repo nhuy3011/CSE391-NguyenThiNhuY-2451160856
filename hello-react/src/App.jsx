@@ -1,14 +1,12 @@
+import LifecycleDemo from './LifecycleDemo'; // Nối file mới vào đây
+
 function App() {
-  return (
-      <div>
-          <h1>Nguyễn Thị Như Ý - TLU</h1>
-          <p>Hôm nay là một ngày tuyệt vời để học React!</p>
-          <ul>
-              <li>HTML & CSS</li>
-              <li>JavaScript nâng cao</li>
-              <li>React Basics</li>
-          </ul>
-      </div>
-  );
+    return (
+        <div>
+            {/* Gọi Component LifecycleDemo ra màn hình */}
+            <LifecycleDemo /> 
+        </div>
+    );
 }
+
 export default App;

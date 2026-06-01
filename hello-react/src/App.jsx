@@ -1,7 +1,7 @@
-import ListBasics from "./tier_6/ListBasics";
+import CreateItem from "./tier_6/CreateItem";
 
 function App() {
-    return <ListBasics />;
+    return <CreateItem />;
 }
 
 export default App;

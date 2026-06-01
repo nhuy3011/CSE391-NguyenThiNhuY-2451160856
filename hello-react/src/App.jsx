@@ -1,7 +1,7 @@
-import BooleanState from "./tier_4/BooleanState";
+import MultipleStates from "./tier_4/MultipleStates";
 
 function App() {
-    return <BooleanState />;
+    return <MultipleStates />;
 }
 
 export default App;

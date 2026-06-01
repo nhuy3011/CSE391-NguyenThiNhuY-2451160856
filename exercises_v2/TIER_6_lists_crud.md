@@ -13,3 +13,12 @@
 3. Tập trung lại vào đầu vào sau khi thêm
 <img width="1832" height="862" alt="Screenshot 2026-06-01 164657" src="https://github.com/user-attachments/assets/59686377-2f2d-4329-8dc0-581fce55a102" />
 <img width="1702" height="823" alt="Screenshot 2026-06-01 164722" src="https://github.com/user-attachments/assets/bb06eddc-7a9d-431b-a803-521af80531da" />
+
+##  Bài 6.3 — Xóa phần tử (DELETE) (10 phút)
+**Thử nghiệm**
+1. Show "Đã xóa [tên]" sau khi xóa
+2. Add node "Hoàn tác" trong 5 giây
+3. Chỉ cho xóa khi xác nhận
+<img width="1869" height="909" alt="Screenshot 2026-06-01 165022" src="https://github.com/user-attachments/assets/d0e7e448-3835-4ada-be8f-48fac3d4ccdf" />
+<img width="1811" height="945" alt="Screenshot 2026-06-01 165007" src="https://github.com/user-attachments/assets/986e73ae-abdb-48a9-a0ba-6f13f7af7bef" />
+
